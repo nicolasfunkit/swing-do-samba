@@ -1,0 +1,4 @@
+node_modules
+dist
+# Vidéo source : appartient à son auteur, non redistribuée
+*.mp4
