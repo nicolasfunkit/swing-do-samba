@@ -16,6 +16,20 @@ npm run check    # vérification des types (svelte-check)
 npm run build    # build de production dans dist/
 ```
 
+## Exporter en site statique
+
+```bash
+npm run build
+```
+
+Le dossier `dist/` contient alors tout le site : un `index.html`, un fichier
+JS et un fichier CSS, sans serveur applicatif. On peut le déposer tel quel sur
+n'importe quel hébergement statique, à la racine ou dans un sous-dossier.
+
+Pour vérifier le résultat en local : `npm run preview`. Ouvrir `index.html`
+directement depuis le disque ne marche pas, le navigateur bloque les modules
+JS en `file://`.
+
 ## Origine
 
 Le projet part de la vidéo « O swing do samba » d'André Hosoi
