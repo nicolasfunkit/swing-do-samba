@@ -31,7 +31,7 @@ describe('grooves', () => {
     expect(positions(samba, -1)).toEqual(positions(samba, 0));
   });
 
-  it('place la samba dans les fourchettes mesurées', () => {
+  it('place le samba dans les fourchettes mesurées', () => {
     const [, second, third, fourth] = positions(getGroove('samba'), 1);
     expect(second).toBeGreaterThanOrEqual(0.25);
     expect(second).toBeLessThanOrEqual(0.29);
@@ -50,7 +50,7 @@ describe('grooves', () => {
     expect(t[3].offsetMs).toBeCloseTo(-20);
   });
 
-  it('donne un écart moyen de 1/40 du temps pour la samba', () => {
+  it('donne un écart moyen de 1/40 du temps pour le samba', () => {
     for (const bpm of [60, 90, 140]) {
       const mean = meanAbsOffsetMs(noteTimings(getGroove('samba'), 1, bpm));
       expect(mean).toBeCloseTo(beatMs(bpm) / 40);

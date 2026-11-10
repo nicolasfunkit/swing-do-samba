@@ -84,15 +84,15 @@
   function offsetLabel(offsetMs: number): string {
     const rounded = Math.round(offsetMs);
     if (rounded === 0) return 'sur la grille';
-    return rounded > 0 ? `+${rounded} ms · en retard` : `−${-rounded} ms · en avance`;
+    return rounded > 0 ? `${rounded} ms en retard` : `${-rounded} ms en avance`;
   }
 </script>
 
 <main>
   <header>
-    <p class="eyebrow">Microtemps dans la samba</p>
-    <h1>Le swing de la samba</h1>
-    <p class="lede">Ni garfinho, ni tercina : le tamborim joue entre les deux.</p>
+    <p class="eyebrow">Le microtemps du samba</p>
+    <h1>Le swing du samba</h1>
+    <p class="lede">Ni garfinho, ni tercina.</p>
   </header>
 
   <section class="grooves" aria-label="Choix du groove">
@@ -152,14 +152,13 @@
       {/if}
     </svg>
     <p class="legend">
-      Cercles vides : grille écrite · traits pointillés : tiers du triolet · points pleins : notes
-      jouées
+      Cercles vides : la grille. Points pleins : ce qui est joué. Pointillés : la tercina.
     </p>
   </section>
 
   <section class="controls">
     <button class="play" onclick={toggle} aria-pressed={playing}>
-      {playing ? 'Arrêter' : 'Lire'}
+      {playing ? 'Stop' : 'Jouer'}
     </button>
 
     <label>
@@ -182,18 +181,18 @@
 
   <section class="stats">
     <div class="stat">
-      <span class="stat-label">Un temps</span>
+      <span class="stat-label">Durée d’un temps</span>
       <span class="stat-value">{ms(beat)}</span>
     </div>
     <div class="stat">
-      <span class="stat-label">Écart moyen à la grille</span>
+      <span class="stat-label">Écart moyen</span>
       <span class="stat-value">{ms(meanOffset)}</span>
       {#if meanOffset > 0.5}
-        <span class="stat-note">≈ 1/{Math.round(beat / meanOffset)} du temps</span>
+        <span class="stat-note">1/{Math.round(beat / meanOffset)} du temps</span>
       {/if}
     </div>
     <div class="stat">
-      <span class="stat-label">Temps en cours</span>
+      <span class="stat-label">Temps</span>
       <span class="stat-value">{playing ? beatNumber : '–'}</span>
     </div>
   </section>
@@ -204,8 +203,8 @@
         <tr>
           <th>Note</th>
           <th>Position</th>
-          <th>Instant</th>
-          <th>Écart à la grille</th>
+          <th>En ms</th>
+          <th>Écart</th>
         </tr>
       </thead>
       <tbody>
@@ -225,8 +224,7 @@
   </div>
 
   <footer>
-    D’après la vidéo « O swing do samba » d’André Hosoi. Mesures citées : Gouyon (2007), samba de
-    roda.
+    D’après la vidéo « O swing do samba » d’André Hosoi. Chiffres : Gouyon (2007), samba de roda.
   </footer>
 </main>
 

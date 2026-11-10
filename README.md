@@ -1,6 +1,6 @@
-# Le swing de la samba
+# Le swing du samba
 
-Page interactive qui fait entendre et voir le microtemps de la samba : on choisit
+Page interactive qui fait entendre et voir le microtemps du samba : on choisit
 un groove, on règle le tempo et la quantité de swing, et on observe où tombe
 chaque note dans le temps, en pourcentage et en millisecondes.
 
@@ -52,9 +52,9 @@ swing (grille droite, garfinho, tercina) ont simplement `grid` égal à
 `target`, et le curseur est alors désactivé.
 
 Le BPM n'intervient qu'au dernier moment, pour convertir une fraction en
-millisecondes (`60000 / bpm` par temps). C'est ce qui rend l'effet du tempo
-visible : les pourcentages ne bougent pas, les millisecondes si. À 90 bpm
-l'écart moyen de la samba est d'environ 17 ms, à 140 bpm d'environ 11 ms.
+millisecondes (`60000 / bpm` par temps). Quand le tempo change, les
+pourcentages ne bougent pas, les millisecondes si. À 90 bpm
+l'écart moyen du samba est d'environ 17 ms, à 140 bpm d'environ 11 ms.
 
 ### 2. Programmer le son sur l'horloge audio
 
@@ -83,8 +83,7 @@ Trois voix Tone.js, sans échantillons :
 
 L'interface (`src/App.svelte`) ne tient pas sa propre horloge. À chaque image
 (`requestAnimationFrame`), elle demande au moteur quel temps est en cours et
-en déduit la position de la tête de lecture et les notes à allumer. L'image
-suit donc l'horloge audio, pas l'inverse.
+en déduit la position de la tête de lecture et les notes à allumer.
 
 La ligne de temps montre les cercles vides de la grille écrite, les points
 pleins des notes jouées, un trait coloré pour le déplacement entre les deux,
@@ -93,7 +92,7 @@ chaque note sa position, son instant et son écart à la grille.
 
 ## Choix et limites
 
-- **Valeurs de la samba** : `0 · 27 · 46 · 71 %`, le milieu des fourchettes
+- **Valeurs du samba** : `0 · 27 · 46 · 71 %`, le milieu des fourchettes
   de la vidéo. C'est un choix d'implémentation, pas une mesure. Il donne un
   écart moyen d'exactement 1/40 du temps, cohérent avec la vidéo.
 - **Swing MPC** : réglé à 62 % (`0 · 31 · 50 · 81 %`). La vidéo ne donne pas

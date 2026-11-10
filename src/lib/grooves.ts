@@ -23,7 +23,7 @@ export const GROOVES: Groove[] = [
   {
     id: 'samba',
     label: 'Samba',
-    hint: 'La 2ᵉ retarde un peu, les 3ᵉ et 4ᵉ sont tirées vers l’avant.',
+    hint: 'La 2ᵉ note traîne un peu, la 3ᵉ et la 4ᵉ arrivent en avance.',
     grid: SIXTEENTHS,
     // Milieu des fourchettes mesurées : 25–29 %, 42–50 %, 67–75 %.
     target: [0, 0.27, 0.46, 0.71],
@@ -31,35 +31,35 @@ export const GROOVES: Groove[] = [
   {
     id: 'straight',
     label: 'Grille droite',
-    hint: 'Quatre doubles-croches égales, quantifiées.',
+    hint: 'Quatre doubles-croches égales.',
     grid: SIXTEENTHS,
     target: SIXTEENTHS,
   },
   {
     id: 'garfinho',
     label: 'Garfinho',
-    hint: 'Double-croche, croche, double-croche : 0 · 25 · 75 %.',
+    hint: 'Double-croche, croche, double-croche.',
     grid: [0, 0.25, 0.75],
     target: [0, 0.25, 0.75],
   },
   {
     id: 'tercina',
     label: 'Tercina',
-    hint: 'Triolet : trois notes égales, 0 · 33 · 67 %.',
+    hint: 'Trois notes égales dans le temps.',
     grid: [0, 1 / 3, 2 / 3],
     target: [0, 1 / 3, 2 / 3],
   },
   {
     id: 'jazz',
     label: 'Jazz',
-    hint: 'Deux croches, la 2ᵉ retardée jusqu’au rapport 2:1.',
+    hint: 'Deux croches, la 2ᵉ en retard.',
     grid: [0, 0.5],
     target: [0, 2 / 3],
   },
   {
     id: 'mpc',
     label: 'Swing MPC',
-    hint: 'Les 2ᵉ et 4ᵉ doubles-croches retardent (réglage 62 %).',
+    hint: 'La 2ᵉ et la 4ᵉ double-croche en retard.',
     grid: SIXTEENTHS,
     // Swing MPC à 62 % : chaque paire de doubles-croches est découpée 62/38.
     target: [0, 0.31, 0.5, 0.81],
