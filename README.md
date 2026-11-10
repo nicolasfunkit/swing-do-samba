@@ -30,6 +30,13 @@ Pour vérifier le résultat en local : `npm run preview`. Ouvrir `index.html`
 directement depuis le disque ne marche pas, le navigateur bloque les modules
 JS en `file://`.
 
+## En ligne
+
+Le site est publié sur GitHub Pages : https://nicolasfunkit.github.io/swing-do-samba/
+
+Chaque push sur `main` lance `.github/workflows/pages.yml`, qui exécute les
+tests, construit `dist/` et le déploie.
+
 ## Mobile et installation (PWA)
 
 La page s'adapte à la largeur de l'écran. La ligne de temps est dessinée à
