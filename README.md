@@ -30,6 +30,26 @@ Pour vérifier le résultat en local : `npm run preview`. Ouvrir `index.html`
 directement depuis le disque ne marche pas, le navigateur bloque les modules
 JS en `file://`.
 
+## Mobile et installation (PWA)
+
+La page s'adapte à la largeur de l'écran. La ligne de temps est dessinée à
+l'échelle 1 unité = 1 pixel et se recalcule selon la largeur disponible : elle
+s'étire, mais les points et les textes gardent la même taille. Les boutons et
+curseurs font au moins 44 px de haut pour le tactile.
+
+Le site est installable et marche hors ligne après une première visite :
+
+- `public/manifest.webmanifest` : nom, couleurs, icônes ;
+- `public/sw.js` : service worker écrit à la main, sans dépendance. À
+  l'installation il lit `index.html` pour trouver les fichiers JS et CSS (leur
+  nom change à chaque build) et les met en cache. La page est servie réseau
+  d'abord, les fichiers cache d'abord ;
+- le service worker n'est enregistré que sur le build de production, pas en
+  `npm run dev`.
+
+Une PWA exige HTTPS (ou `localhost`). Sur iPhone, le son passe par le bouton
+latéral : en mode silencieux, rien ne sort.
+
 ## Origine
 
 Le projet part de la vidéo « O swing do samba » d'André Hosoi
@@ -127,4 +147,5 @@ src/lib/grooves.ts        modèle : grooves, interpolation, conversion en ms
 src/lib/grooves.test.ts   tests du modèle
 src/lib/engine.ts         planificateur et synthèse Tone.js
 src/App.svelte            interface et visualisation
+public/                   manifeste, service worker, icônes
 ```

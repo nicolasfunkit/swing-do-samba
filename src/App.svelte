@@ -64,10 +64,15 @@
   });
 
   // Géométrie de la ligne de temps (unités du viewBox).
-  const X0 = 60;
-  const WIDTH = 880;
-  const Y = 110;
-  const x = (fraction: number) => X0 + fraction * WIDTH;
+  // Une unité SVG = un pixel : la ligne s'étire avec l'écran, mais les
+  // points et les textes gardent une taille lisible sur téléphone.
+  let stageWidth = $state(700);
+  const HEIGHT = 150;
+  const PAD_LEFT = 22;
+  const PAD_RIGHT = 34;
+  const Y = 84;
+  const x = (fraction: number) =>
+    PAD_LEFT + fraction * Math.max(stageWidth - PAD_LEFT - PAD_RIGHT, 100);
 
   const NOTE_COLORS = ['var(--note-1)', 'var(--note-2)', 'var(--note-3)', 'var(--note-4)'];
   const LIT_MS = 90;
@@ -105,52 +110,60 @@
   <p class="hint">{groove.hint}</p>
 
   <section class="stage">
-    <svg viewBox="0 0 1000 200" role="img" aria-label="Position des notes dans un temps">
-      <line class="axis" x1={x(0)} y1={Y} x2={x(1)} y2={Y} />
+    <div class="svg-wrap" bind:clientWidth={stageWidth}>
+      <svg
+        viewBox="0 0 {stageWidth} {HEIGHT}"
+        width={stageWidth}
+        height={HEIGHT}
+        role="img"
+        aria-label="Position des notes dans un temps"
+      >
+        <line class="axis" x1={x(0)} y1={Y} x2={x(1)} y2={Y} />
 
-      <!-- Repères : doubles-croches droites et tiers du triolet -->
-      {#each [0, 0.25, 0.5, 0.75, 1] as tick}
-        <line class="tick" x1={x(tick)} y1={Y - 22} x2={x(tick)} y2={Y + 22} />
-        <text class="tick-label" x={x(tick)} y={Y + 44}>{Math.round(tick * beat)}</text>
-      {/each}
-      {#each [1 / 3, 2 / 3] as tick}
-        <line class="tick triplet" x1={x(tick)} y1={Y - 22} x2={x(tick)} y2={Y + 22} />
-      {/each}
-      <text class="tick-label unit" x={x(1) + 14} y={Y + 44}>ms</text>
+        <!-- Repères : doubles-croches droites et tiers du triolet -->
+        {#each [0, 0.25, 0.5, 0.75, 1] as tick}
+          <line class="tick" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
+          <text class="tick-label" x={x(tick)} y={Y + 36}>
+            {Math.round(tick * beat)}{tick === 1 ? ' ms' : ''}
+          </text>
+        {/each}
+        {#each [1 / 3, 2 / 3] as tick}
+          <line class="tick triplet" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
+        {/each}
 
-      <!-- Grille de référence (cercles vides) et déplacement -->
-      {#each timings as t (t.index)}
-        <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="11" />
-        {#if Math.abs(t.fraction - t.gridFraction) > 0.002}
-          <line
-            class="shift"
-            x1={x(t.gridFraction)}
-            y1={Y - 30}
-            x2={x(t.fraction)}
-            y2={Y - 30}
-            stroke={NOTE_COLORS[t.index % 4]}
+        <!-- Grille de référence (cercles vides) et déplacement -->
+        {#each timings as t (t.index)}
+          <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="9" />
+          {#if Math.abs(t.fraction - t.gridFraction) > 0.002}
+            <line
+              class="shift"
+              x1={x(t.gridFraction)}
+              y1={Y - 24}
+              x2={x(t.fraction)}
+              y2={Y - 24}
+              stroke={NOTE_COLORS[t.index % 4]}
+            />
+            <circle cx={x(t.fraction)} cy={Y - 24} r="3.5" fill={NOTE_COLORS[t.index % 4]} />
+          {/if}
+        {/each}
+
+        <!-- Notes jouées -->
+        {#each timings as t (t.index)}
+          <circle
+            class="note"
+            cx={x(t.fraction)}
+            cy={Y}
+            r={isLit(t.fraction) ? 14 : 9}
+            fill={NOTE_COLORS[t.index % 4]}
           />
-          <circle cx={x(t.fraction)} cy={Y - 30} r="4" fill={NOTE_COLORS[t.index % 4]} />
+          <text class="note-label" x={x(t.fraction)} y={Y - 36}>{t.index + 1}</text>
+        {/each}
+
+        {#if phase !== null}
+          <line class="playhead" x1={x(phase)} y1={Y - 52} x2={x(phase)} y2={Y + 20} />
         {/if}
-      {/each}
-
-      <!-- Notes jouées -->
-      {#each timings as t (t.index)}
-        <circle
-          class="note"
-          class:lit={isLit(t.fraction)}
-          cx={x(t.fraction)}
-          cy={Y}
-          r={isLit(t.fraction) ? 17 : 11}
-          fill={NOTE_COLORS[t.index % 4]}
-        />
-        <text class="note-label" x={x(t.fraction)} y={Y - 44}>{t.index + 1}</text>
-      {/each}
-
-      {#if phase !== null}
-        <line class="playhead" x1={x(phase)} y1={Y - 60} x2={x(phase)} y2={Y + 26} />
-      {/if}
-    </svg>
+      </svg>
+    </div>
     <p class="legend">
       Cercles vides : la grille. Points pleins : ce qui est joué. Pointillés : la tercina.
     </p>
@@ -269,7 +282,14 @@
   main {
     max-width: 780px;
     margin: 0 auto;
-    padding: 32px 16px 48px;
+    padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+      max(40px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+
+  button,
+  label {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .eyebrow {
@@ -299,7 +319,8 @@
   }
 
   .chip {
-    padding: 8px 14px;
+    min-height: 44px;
+    padding: 8px 16px;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: var(--surface);
@@ -328,10 +349,13 @@
     padding: 12px 8px 8px;
   }
 
+  .svg-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+
   svg {
     display: block;
-    width: 100%;
-    height: auto;
   }
 
   .axis {
@@ -353,13 +377,9 @@
   .tick-label,
   .note-label {
     fill: var(--muted);
-    font-size: 18px;
+    font-size: 12px;
     text-anchor: middle;
     font-variant-numeric: tabular-nums;
-  }
-
-  .tick-label.unit {
-    text-anchor: start;
   }
 
   .note-label {
@@ -374,7 +394,7 @@
   }
 
   .shift {
-    stroke-width: 3;
+    stroke-width: 2.5;
     stroke-linecap: round;
   }
 
@@ -432,6 +452,8 @@
 
   input[type='range'] {
     width: 100%;
+    height: 32px;
+    margin: 0;
     accent-color: var(--accent);
   }
 
@@ -439,13 +461,14 @@
     grid-column: 2 / -1;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    min-height: 44px;
   }
 
   .check input {
     accent-color: var(--accent);
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
 
   .stats {
@@ -528,7 +551,22 @@
     }
 
     .stats {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat:last-child {
+      display: none;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+    }
+
+    th,
+    td {
+      padding: 10px 6px;
+      font-size: 0.9rem;
     }
   }
 </style>
