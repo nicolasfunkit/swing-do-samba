@@ -29,7 +29,7 @@ const TICK_MS = 25;
 const LOOKAHEAD_S = 0.15;
 
 function createVoices(): Voices {
-  const out = new Tone.Gain(0.8).toDestination();
+  const out = new Tone.Gain(0.7).toDestination();
 
   // Tamborim : un corps aigu très court + un claquement de bruit filtré.
   const tamborimTone = new Tone.MembraneSynth({
@@ -55,13 +55,15 @@ function createVoices(): Voices {
   }).connect(out);
   surdo.volume.value = -4;
 
-  // Palma : bruit rose passe-bande, sur le 2.
-  const bandpass = new Tone.Filter(1500, 'bandpass').connect(out);
+  // Palma : bruit blanc passe-bande, sur le 2. Le filtre retire l'essentiel
+  // de l'énergie, d'où le gain élevé : il faut passer par-dessus le surdo,
+  // qui frappe au même instant.
+  const bandpass = new Tone.Filter({ type: 'bandpass', frequency: 1300, Q: 0.8 }).connect(out);
   const palma = new Tone.NoiseSynth({
-    noise: { type: 'pink' },
-    envelope: { attack: 0.001, decay: 0.09, sustain: 0, release: 0.02 },
+    noise: { type: 'white' },
+    envelope: { attack: 0.001, decay: 0.12, sustain: 0, release: 0.03 },
   }).connect(bandpass);
-  palma.volume.value = -2;
+  palma.volume.value = 3;
 
   return {
     tamborimTone,
@@ -141,7 +143,7 @@ export class Engine {
 
     // Surdo : étouffé sur le 1, ouvert et plus fort sur le 2.
     voices.surdo.triggerAttackRelease(isBeatTwo ? 'F1' : 'A1', 0.2, start, isBeatTwo ? 0.9 : 0.4);
-    if (palma && isBeatTwo) voices.palma.triggerAttackRelease(0.05, start, 0.8);
+    if (palma && isBeatTwo) voices.palma.triggerAttackRelease(0.06, start, 1);
 
     positions.forEach((fraction, i) => {
       const time = start + fraction * duration;
