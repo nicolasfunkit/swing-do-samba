@@ -4,6 +4,7 @@
   import {
     GROOVES,
     beatMs,
+    DEFAULT_MAX_BPM,
     getGroove,
     isSwingable,
     meanAbsOffsetMs,
@@ -23,6 +24,7 @@
 
   const groove = $derived(getGroove(grooveId));
   const swingable = $derived(isSwingable(groove));
+  const maxBpm = $derived(groove.maxBpm ?? DEFAULT_MAX_BPM);
   const swing = $derived(swingPct / 100);
   const timings = $derived(noteTimings(groove, swing, bpm));
   const beat = $derived(beatMs(bpm));
@@ -30,9 +32,22 @@
 
   const engine = new Engine(() => ({
     bpm,
-    positions: positions(groove, swing),
+    positions: positions(groove, swing, bpm),
     palma,
   }));
+
+  // Rapport réellement joué entre les deux croches du jazz, swing compris.
+  const jazzRatio = $derived.by(() => {
+    if (groove.id !== 'jazz') return null;
+    const second = timings[1].fraction;
+    return (second / (1 - second)).toFixed(1).replace('.', ',');
+  });
+
+  function selectGroove(id: string) {
+    grooveId = id;
+    // Le jazz monte jusqu'à 300 bpm, les autres s'arrêtent à 160.
+    bpm = Math.min(bpm, getGroove(id).maxBpm ?? DEFAULT_MAX_BPM);
+  }
 
   let frame = 0;
 
@@ -102,12 +117,17 @@
 
   <section class="grooves" aria-label="Choix du groove">
     {#each GROOVES as g (g.id)}
-      <button class="chip" class:active={g.id === grooveId} onclick={() => (grooveId = g.id)}>
+      <button class="chip" class:active={g.id === grooveId} onclick={() => selectGroove(g.id)}>
         {g.label}
       </button>
     {/each}
   </section>
-  <p class="hint">{groove.hint}</p>
+  <p class="hint">
+    {groove.hint}
+    {#if jazzRatio !== null}
+      Rapport long/court à ce tempo : <strong>{jazzRatio}:1</strong>.
+    {/if}
+  </p>
 
   <section class="stage">
     <div class="svg-wrap" bind:clientWidth={stageWidth}>
@@ -176,7 +196,7 @@
 
     <label>
       <span>Tempo <strong>{bpm} bpm</strong></span>
-      <input type="range" min="60" max="160" step="1" bind:value={bpm} />
+      <input type="range" min="60" max={maxBpm} step="1" bind:value={bpm} />
     </label>
 
     <label class:disabled={!swingable}>

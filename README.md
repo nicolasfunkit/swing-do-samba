@@ -138,7 +138,14 @@ chaque note sa position, son instant et son écart à la grille.
   écart moyen d'exactement 1/40 du temps, cohérent avec la vidéo.
 - **Swing MPC** : réglé à 62 % (`0 · 31 · 50 · 81 %`). La vidéo ne donne pas
   de chiffre ; c'est une valeur courante, à ajuster.
-- **Jazz** : deux croches par temps, la 2ᵉ allant jusqu'au rapport 2:1.
+- **Jazz** : deux croches par temps, dont le rapport long/court dépend du
+  tempo. C'est le seul groove où le BPM change les proportions. Le modèle
+  garde la note courte à 100 ms et borne le rapport entre 1:1 et 3,5:1 : il
+  vaut 3,5:1 jusqu'à 133 bpm, 2:1 à 200 bpm, 1:1 à 300 bpm. Il s'appuie sur
+  Friberg & Sundström (2002), qui ont mesuré la cymbale ride de batteurs ;
+  c'est une simplification de leurs résultats, pas un ajustement sur leurs
+  données, et les solistes swinguent en général moins que ça. Le curseur de
+  tempo monte à 300 bpm pour ce groove, 160 pour les autres.
 - **Écart en ms** : la vidéo donne à la fois des pourcentages et des écarts
   en ms. Le modèle retient les pourcentages ; les ms en découlent selon le
   tempo.
