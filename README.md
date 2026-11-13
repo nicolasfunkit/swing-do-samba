@@ -220,6 +220,13 @@ chaque note sa position, son instant et son écart à la grille.
 grooves brésiliens et la tercina sous une forme prête pour un séquenceur :
 positions, ticks, décalages par pas, millisecondes et un bloc JSON.
 
+## Mesurer un nouveau groove
+
+[`docs/mesurer-le-swing.md`](docs/mesurer-le-swing.md) explique comment
+mesurer le swing d'un instrument seul (un cavaquinho, par exemple) à partir
+d'un fichier audio ou vidéo, avec `tools/mesurer_swing.py`. Le script ne
+demande que Python et ffmpeg.
+
 ## Sources
 
 - **Samba** : L. Naveda, F. Gouyon, C. Guedes, M. Leman, « Microtiming Patterns
@@ -262,5 +269,7 @@ src/lib/grooves.ts        modèle : grooves, interpolation, conversion en ms
 src/lib/grooves.test.ts   tests du modèle
 src/lib/engine.ts         planificateur et synthèse Tone.js
 src/App.svelte            interface et visualisation
+tools/mesurer_swing.py    mesure du swing sur un enregistrement
+docs/                     référence pour séquenceur, méthode de mesure
 public/                   manifeste, service worker, icônes
 ```

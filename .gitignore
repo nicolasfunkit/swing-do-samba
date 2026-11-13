@@ -3,3 +3,11 @@ dist
 # Vidéo et article sources : appartiennent à leurs auteurs, non redistribués
 *.mp4
 *.pdf
+# Sons et vidéos analysés, résultats de mesure locaux
+*.m4a
+*.mp3
+*.wav
+*.opus
+*.webm
+*.mkv
+mesures/
