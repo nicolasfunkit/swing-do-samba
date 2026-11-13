@@ -12,6 +12,10 @@ Exemples :
     python3 tools/mesurer_swing.py --autotest
     python3 tools/mesurer_swing.py cavaco.mp4 --debut 12 --fin 45 --bpm 96
     python3 tools/mesurer_swing.py cavaco.mp4 --debut 12 --fin 45 --json cavaco.json --labels cavaco.txt
+    python3 tools/mesurer_swing.py partido.mp4 --debut 8 --fin 60 --bpm 92 --cycle 16
+
+Avec --cycle, le motif peut avoir des silences (partido alto, variations de
+levada) : les notes sont rangées dans les cases d'un cycle de N doubles-croches.
 """
 
 from __future__ import annotations
@@ -219,6 +223,212 @@ def segment(onsets: list[float], levels: list[float], beat: float, first: int, t
     return kept, rejected, lost_at
 
 
+# --- Mode cycle : motifs avec silences ------------------------------------
+
+
+def track_beats(onsets: list[float], beat: float, first: int, tolerance: float) -> list[tuple[int, int]]:
+    """Suit la pulsation à partir d'une note posée sur un temps.
+
+    Renvoie les ancres : couples (numéro du temps, indice de l'attaque) pour
+    chaque temps où une note tombe à moins de `tolerance` de l'instant prévu.
+    Les temps sans note sont sautés ; ils seront interpolés ensuite.
+    """
+    anchors = [(0, first)]
+    last_number, last_time, index = 0, onsets[first], first
+    number = 0
+    while True:
+        number += 1
+        predicted = last_time + (number - last_number) * beat
+        if predicted > onsets[-1] + tolerance * beat:
+            break
+        j = nearest(onsets, index + 1, predicted)
+        if j is not None and abs(onsets[j] - predicted) <= tolerance * beat:
+            beat = 0.7 * beat + 0.3 * (onsets[j] - last_time) / (number - last_number)
+            anchors.append((number, j))
+            last_number, last_time, index = number, onsets[j], j
+    return anchors
+
+
+def assign_slots(onsets: list[float], levels: list[float], anchors: list[tuple[int, int]], tolerance: float):
+    """Range chaque attaque dans une double-croche, entre deux ancres.
+
+    Entre deux ancres séparées de plusieurs temps, les temps intermédiaires
+    sont placés à intervalles égaux. `span` garde la longueur de ce trou, pour
+    pouvoir écarter les notes mesurées trop loin d'une ancre.
+    """
+    notes = []
+    off_grid = 0
+    places = [0.0, 0.25, 0.5, 0.75, 1.0]
+    for (number_a, j_a), (number_b, j_b) in zip(anchors, anchors[1:]):
+        span = number_b - number_a
+        interval = (onsets[j_b] - onsets[j_a]) / span
+        notes.append({"temps": number_a, "place": 0, "fraction": 0.0, "niveau": levels[j_a], "span": 0, "t": onsets[j_a]})
+        for j in range(j_a + 1, j_b):
+            relative = (onsets[j] - onsets[j_a]) / interval
+            whole = math.floor(relative)
+            fraction = relative - whole
+            place = min(range(5), key=lambda q: abs(fraction - places[q]))
+            if abs(fraction - places[place]) >= tolerance:
+                off_grid += 1
+                continue
+            if place == 4:
+                whole, place, fraction = whole + 1, 0, fraction - 1.0
+            notes.append(
+                {"temps": number_a + whole, "place": place, "fraction": fraction, "niveau": levels[j], "span": span, "t": onsets[j]}
+            )
+    return notes, off_grid
+
+
+def fit_spread(onsets: list[float], beat: float, first: int, tolerance: float, max_span: int) -> float:
+    """Qualité d'un tempo candidat : dispersion des positions, plus petit = mieux.
+
+    Au bon tempo, les notes d'une même place tombent toujours au même endroit
+    du temps. À un tempo faux, elles s'éparpillent ou sortent de la grille.
+    """
+    anchors = track_beats(onsets, beat, first, tolerance)
+    if len(anchors) < 3:
+        return math.inf
+    notes, _ = assign_slots(onsets, [0.0] * len(onsets), anchors, tolerance)
+    weighted, freedom = 0.0, 0
+    for place in (1, 2, 3):
+        values = [n["fraction"] for n in notes if n["place"] == place and n["span"] <= max_span]
+        if len(values) > 1:
+            weighted += statistics.variance(values) * (len(values) - 1)
+            freedom += len(values) - 1
+    if freedom < 4:
+        return math.inf
+    unassigned = 1 - len(notes) / len(onsets)
+    return math.sqrt(weighted / freedom) + 0.3 * unassigned
+
+
+def estimate_beat_fit(onsets: list[float], bpm: float | None, first: int, tolerance: float, max_span: int) -> float:
+    """Durée d'un temps pour un motif à trous.
+
+    On essaie une série de tempos et on garde celui qui donne les positions
+    les plus resserrées. Sans --bpm, la recherche couvre 50 à 160 bpm et peut
+    se tromper d'un facteur simple (double, moitié) : mieux vaut le donner.
+    """
+    if bpm:
+        candidates = [bpm * (0.94 + 0.005 * i) for i in range(25)]
+    else:
+        candidates = [50 + i for i in range(111)]
+    scored = [(fit_spread(onsets, 60 / c, first, tolerance, max_span), c) for c in candidates]
+    spread, best = min(scored)
+    if math.isinf(spread):
+        sys.exit("Aucun tempo ne permet de suivre la pulsation : vérifie --bpm et --premiere.")
+    return 60 / best
+
+
+def summarize_cycle(notes: list[dict], anchors: list[tuple[int, int]], onsets: list[float], cycle: int, max_span: int) -> dict:
+    beats_per_cycle = cycle // 4
+    total_beats = anchors[-1][0]
+    mean_level = statistics.fmean(n["niveau"] for n in notes)
+    intervals = [
+        (onsets[j_b] - onsets[j_a]) / (b - a) for (a, j_a), (b, j_b) in zip(anchors, anchors[1:])
+    ]
+    beat = statistics.median(intervals)
+    cases = []
+    for case in range(cycle):
+        beat_in_cycle, place = divmod(case, 4)
+        occurrences = sum(1 for number in range(total_beats) if number % beats_per_cycle == beat_in_cycle)
+        played = [n for n in notes if n["temps"] % beats_per_cycle == beat_in_cycle and n["place"] == place]
+        measured = [n["fraction"] for n in played if place and n["span"] <= max_span]
+        entry = {
+            "case": case + 1,
+            "temps": beat_in_cycle + 1,
+            "double_croche": place + 1,
+            "jouee": len(played) / occurrences if occurrences else 0.0,
+            "n": len(measured),
+            "position": statistics.fmean(measured) if measured else None,
+            "ecart_type": statistics.stdev(measured) if len(measured) > 1 else None,
+            "niveau_db": statistics.fmean(n["niveau"] for n in played) - mean_level if played else None,
+        }
+        cases.append(entry)
+    pooled = []
+    for place in (1, 2, 3):
+        values = [n["fraction"] for n in notes if n["place"] == place and n["span"] <= max_span]
+        pooled.append(
+            {
+                "n": len(values),
+                "moyenne": statistics.fmean(values) if values else None,
+                "mediane": statistics.median(values) if values else None,
+                "ecart_type": statistics.stdev(values) if len(values) > 1 else None,
+            }
+        )
+    return {
+        "mode": "cycle",
+        "cases_par_cycle": cycle,
+        "temps_suivis": total_beats,
+        "temps_ancres": len(anchors) - 1,
+        "plus_long_trou": max(b - a for (a, _), (b, _) in zip(anchors, anchors[1:])),
+        "notes_ecartees": sum(1 for n in notes if n["place"] and n["span"] > max_span),
+        "tempo_bpm": 60 / beat,
+        "cases": cases,
+        "regroupe": pooled,
+    }
+
+
+def print_cycle_report(summary: dict, onset_count: int, off_grid: int, max_span: int) -> None:
+    cycle = summary["cases_par_cycle"]
+    beat_ms = 60000 / summary["tempo_bpm"]
+    share = 100 * summary["temps_ancres"] / max(1, summary["temps_suivis"])
+    print(f"Attaques détectées : {onset_count}")
+    print(f"Cycle : {cycle} doubles-croches ({cycle // 4} temps), {summary['temps_suivis'] // (cycle // 4)} cycles complets suivis")
+    print(f"Temps suivis : {summary['temps_suivis']}, dont {summary['temps_ancres']} portent une note ({share:.0f} %)")
+    print(f"Plus long trou sans note sur un temps : {summary['plus_long_trou']} temps")
+    print(f"Notes hors grille : {off_grid}   notes écartées (trou de plus de {max_span} temps) : {summary['notes_ecartees']}")
+    print(f"Tempo médian : {summary['tempo_bpm']:.1f} bpm (un temps = {beat_ms:.0f} ms)")
+    print()
+    print("Motif joué (x : presque toujours, o : parfois, . : jamais ou presque)")
+    marks = ["x" if c["jouee"] >= 2 / 3 else "o" if c["jouee"] >= 0.2 else "." for c in summary["cases"]]
+    print("  " + " | ".join(" ".join(marks[i : i + 4]) for i in range(0, cycle, 4)))
+    print()
+    print("Par case (position en % du temps, grille droite : 0 · 25 · 50 · 75)")
+    print("  case  temps.note   jouée   position   écart-type   écart ms   force dB     n")
+    for c in summary["cases"]:
+        if c["jouee"] < 0.2:
+            continue
+        name = f"{c['temps']}.{c['double_croche']}"
+        played = f"{100 * c['jouee']:4.0f} %"
+        level = "     —" if c["niveau_db"] is None else f"{c['niveau_db']:+6.1f}".replace(".", ",")
+        if c["double_croche"] == 1 or c["position"] is None:
+            print(f"  {c['case']:>4}  {name:>9}   {played}        —            —          —     {level}     —")
+            continue
+        grid = (c["double_croche"] - 1) / 4
+        spread = "    —" if c["ecart_type"] is None else pct(c["ecart_type"])
+        offset = (c["position"] - grid) * beat_ms
+        print(f"  {c['case']:>4}  {name:>9}   {played}    {pct(c['position'])}        {spread}      {offset:+5.0f}     {level}   {c['n']:>3}")
+    print()
+    print("Regroupé par place dans le temps, toutes cases confondues (en %)")
+    print("                       2ᵉ note   3ᵉ note   4ᵉ note")
+    for label, key in [("Moyenne", "moyenne"), ("Médiane", "mediane"), ("Écart-type", "ecart_type")]:
+        cells = "    ".join("    —" if p[key] is None else pct(p[key]) for p in summary["regroupe"])
+        print(f"  {label:<18}  {cells}")
+    print(f"  {'Nombre de notes':<18}  " + "    ".join(f"{p['n']:5d}" for p in summary["regroupe"]))
+    print()
+    print("Pour comparer, positions publiées (en %)")
+    for name, reference in REFERENCES.items():
+        cells = "    ".join("    —" if v is None else pct(v) for v in reference)
+        print(f"  {name:<30}  {cells}")
+
+
+def analyse_cycle(path: str, start, end, bpm, first, sensitivity, min_gap, tolerance, cycle, max_span):
+    envelopes = [energy_envelope(decode(path, start, end, band)) for band in BANDS]
+    if min(len(e) for e in envelopes) < 1000:
+        sys.exit("Le passage est trop court ou vide.")
+    onsets = pick_onsets(onset_strength(envelopes), min_gap, sensitivity)
+    if len(onsets) < 8 or first >= len(onsets):
+        sys.exit(f"Trop peu d'attaques détectées ({len(onsets)}).")
+    levels = note_levels(envelopes, onsets)
+    beat = estimate_beat_fit(onsets, bpm, first, tolerance, max_span)
+    anchors = track_beats(onsets, beat, first, tolerance)
+    if len(anchors) < 3:
+        sys.exit("La pulsation n'a pas pu être suivie : vérifie --bpm et --premiere.")
+    notes, off_grid = assign_slots(onsets, levels, anchors, tolerance)
+    summary = summarize_cycle(notes, anchors, onsets, cycle, max_span)
+    return onsets, anchors, summary, off_grid
+
+
 # --- Statistiques et affichage -------------------------------------------
 
 
@@ -295,7 +505,7 @@ def analyse(path: str, start, end, bpm, first, sensitivity, min_gap, tolerance):
     return onsets, kept, rejected, lost_at
 
 
-def synthesize(path: Path, positions: list[float], bpm: float, beats: int, jitter_ms: float) -> None:
+def synthesize(path: Path, positions: list[float], bpm: float, beats: int, jitter_ms: float, mask: list[int] | None = None) -> None:
     """Écrit un WAV de cordes grattées au swing connu, pour tester le script."""
     rng = random.Random(7)
     strings = [293.66, 392.0, 493.88, 587.33]  # ré sol si ré, l'accord du cavaquinho
@@ -306,6 +516,8 @@ def synthesize(path: Path, positions: list[float], bpm: float, beats: int, jitte
     for b in range(beats + 1):
         duration = beat * (1 + 0.01 * math.sin(b / 7))  # léger flottement de tempo
         for i, position in enumerate([0.0] + positions):
+            if mask and not mask[(b * 4 + i) % len(mask)]:
+                continue  # silence : la note n'est pas jouée
             onset = start + position * duration + rng.gauss(0, jitter_ms / 1000)
             order = strings if i % 2 == 0 else strings[::-1]  # aller puis retour
             gain = 0.9 if i == 1 else 0.55  # 2ᵉ note accentuée
@@ -345,8 +557,28 @@ def autotest() -> int:
     errors = [abs(m - t) for m, t in zip(summary["moyenne"], truth)]
     ok = max(errors) < 0.01 and len(kept) >= 40 and summary["niveau_db"][1] == max(summary["niveau_db"])
     print("Attendu : 27,0 · 44,0 · 67,0   erreur maximale : " + f"{max(errors) * 100:.2f}".replace(".", ",") + " % du temps")
-    print("AUTOTEST RÉUSSI" if ok else "AUTOTEST EN ÉCHEC")
-    return 0 if ok else 1
+    print("TEST 1 RÉUSSI" if ok else "TEST 1 EN ÉCHEC")
+
+    # Second test : un motif à trous sur 16 cases, dont deux temps sans note.
+    mask = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0]
+    print()
+    print("Synthèse d'un motif à trous (40 temps à 96 bpm, même swing), mode --cycle 16…")
+    with tempfile.TemporaryDirectory() as folder:
+        path = Path(folder) / "cycle.wav"
+        synthesize(path, truth, bpm=96, beats=40, jitter_ms=4, mask=mask)
+        onsets, anchors, cycle_summary, off_grid = analyse_cycle(str(path), None, None, None, 0, 1.0, 0.05, 0.12, 16, 4)
+    print_cycle_report(cycle_summary, len(onsets), off_grid, 4)
+    found = [1 if c["jouee"] >= 2 / 3 else 0 for c in cycle_summary["cases"]]
+    pooled = [p["moyenne"] for p in cycle_summary["regroupe"]]
+    cycle_errors = [abs(m - t) for m, t in zip(pooled, truth)] if None not in pooled else [1.0]
+    ok_cycle = found == mask and max(cycle_errors) < 0.012 and abs(cycle_summary["tempo_bpm"] - 96) < 1.5
+    print()
+    print("Motif attendu : " + " ".join("x" if v else "." for v in mask))
+    print("Erreur maximale sur les positions regroupées : " + f"{max(cycle_errors) * 100:.2f}".replace(".", ",") + " % du temps")
+    print("TEST 2 RÉUSSI" if ok_cycle else "TEST 2 EN ÉCHEC")
+    print()
+    print("AUTOTEST RÉUSSI" if ok and ok_cycle else "AUTOTEST EN ÉCHEC")
+    return 0 if ok and ok_cycle else 1
 
 
 def main() -> int:
@@ -360,6 +592,8 @@ def main() -> int:
     parser.add_argument("--sensibilite", type=float, default=1.0, help="plus grand = détecte des notes plus faibles (défaut : 1)")
     parser.add_argument("--ecart-min", type=float, default=0.05, help="écart minimal entre deux attaques, en secondes (défaut : 0,05)")
     parser.add_argument("--tolerance", type=float, default=0.12, help="écart maximal à la grille, en fraction du temps (défaut : 0,12)")
+    parser.add_argument("--cycle", type=int, help="motif avec silences : nombre de doubles-croches du cycle (16 = 4 temps)")
+    parser.add_argument("--trou-max", type=int, default=4, help="mode cycle : n'utilise pas les notes mesurées dans un trou plus long, en temps (défaut : 4)")
     parser.add_argument("--json", help="écrit le détail et un bloc de groove dans ce fichier JSON")
     parser.add_argument("--labels", help="écrit les attaques dans une piste de marqueurs Audacity")
     parser.add_argument("--autotest", action="store_true", help="vérifie le script sur un signal de synthèse")
@@ -373,6 +607,29 @@ def main() -> int:
         sys.exit(f"Fichier introuvable : {args.fichier}")
 
     offset = args.debut or 0.0
+    if args.cycle:
+        if args.cycle % 4 or args.cycle < 4:
+            parser.error("--cycle doit être un multiple de 4 (4, 8, 16…)")
+        onsets, anchors, summary, off_grid = analyse_cycle(
+            args.fichier, args.debut, args.fin, args.bpm, args.premiere - 1,
+            args.sensibilite, args.ecart_min, args.tolerance, args.cycle, args.trou_max,
+        )
+        print_cycle_report(summary, len(onsets), off_grid, args.trou_max)
+        if args.labels:
+            anchor_indices = {j for _, j in anchors}
+            with open(args.labels, "w", encoding="utf-8") as out:
+                for index, t in enumerate(onsets):
+                    label = "T" if index in anchor_indices else "x"
+                    out.write(f"{t + offset:.6f}\t{t + offset:.6f}\t{label}\n")
+            print(f"\nMarqueurs Audacity écrits dans {args.labels}")
+        if args.json:
+            pooled = [p["moyenne"] for p in summary["regroupe"]]
+            payload = {"fichier": Path(args.fichier).name, "passage_s": [args.debut, args.fin], **summary}
+            if None not in pooled:
+                payload["groove"] = {"grid": [0, 0.25, 0.5, 0.75], "target": [0] + [round(v, 3) for v in pooled]}
+            Path(args.json).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+            print(f"\nDétail écrit dans {args.json}")
+        return 0
     if args.phases:
         for first in range(4):
             onsets, kept, rejected, _ = analyse(
