@@ -151,9 +151,8 @@
           <line class="tick triplet" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
         {/each}
 
-        <!-- Grille de référence (cercles vides) et déplacement -->
+        <!-- Déplacement par rapport à la grille -->
         {#each timings as t (t.index)}
-          <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="9" />
           {#if Math.abs(t.fraction - t.gridFraction) > 0.002}
             <line
               class="shift"
@@ -185,7 +184,7 @@
       </svg>
     </div>
     <p class="legend">
-      Cercles vides : la grille. Points pleins : ce qui est joué. Pointillés : la tercina.
+      Traits pleins : la grille. Points : ce qui est joué. Pointillés : la tercina.
     </p>
   </section>
 
@@ -405,12 +404,6 @@
   .note-label {
     fill: var(--text);
     font-weight: 700;
-  }
-
-  .ghost {
-    fill: var(--surface);
-    stroke: var(--muted);
-    stroke-width: 2;
   }
 
   .shift {

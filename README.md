@@ -126,8 +126,8 @@ L'interface (`src/App.svelte`) ne tient pas sa propre horloge. À chaque image
 (`requestAnimationFrame`), elle demande au moteur quel temps est en cours et
 en déduit la position de la tête de lecture et les notes à allumer.
 
-La ligne de temps montre les cercles vides de la grille écrite, les points
-pleins des notes jouées, un trait coloré pour le déplacement entre les deux,
+La ligne de temps montre des traits pour la grille écrite, les points des
+notes jouées, un trait coloré pour le déplacement entre les deux,
 et en pointillés les tiers du triolet. Le tableau en dessous donne pour
 chaque note sa position, son instant et son écart à la grille.
 
