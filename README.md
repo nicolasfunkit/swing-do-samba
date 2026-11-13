@@ -174,9 +174,13 @@ chaque note sa position, son instant et son écart à la grille.
   pour lequel je n'ai trouvé aucune mesure publiée.
 - **Samba (Naveda, Gouyon)** : `0 · 25 · 46,8 · 72,3 %`. Ce sont les moyennes
   publiées par Naveda, Gouyon, Guedes et Leman (2011) pour l'aigu du spectre,
-  là où joue le tamborim : 3ᵉ double-croche en avance de 0,032 temps, 4ᵉ de
+  que l'article attribue aux ganzás et aux shakers : 3ᵉ double-croche en avance de 0,032 temps, 4ᵉ de
   0,027 temps (19 et 16 ms à 103 bpm, le tempo moyen de leur corpus). Elles
   tombent dans les fourchettes de la vidéo.
+- **Bandes de fréquences** : l'article place les tamborims, les repiques et
+  les voix dans le médium, pas dans l'aigu. Dans le médium, les avances sont
+  de 0,031 temps pour la 3ᵉ et 0,018 pour la 4ᵉ ; dans le grave, 0,026 et
+  0,028. L'appli joue les valeurs de l'aigu.
 - **2ᵉ double-croche** : la vidéo la montre légèrement en retard (25 → 29 %).
   L'article ne rapporte pas d'écart de placement sur cette note, seulement un
   accent d'intensité ; elle reste donc sur la grille ici.

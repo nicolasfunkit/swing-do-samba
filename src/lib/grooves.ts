@@ -65,8 +65,9 @@ export const GROOVES: Groove[] = [
     hint: 'Mesuré sur 106 enregistrements : la 3ᵉ et la 4ᵉ note en avance, la 2ᵉ en place.',
     grid: SIXTEENTHS,
     // Moyennes mesurées par Naveda, Gouyon, Guedes & Leman (2011) sur 106
-    // extraits, dans l'aigu du spectre (là où joue le tamborim) : 3ᵉ note
+    // extraits, dans l'aigu du spectre (ganzás et shakers) : 3ᵉ note
     // en avance de 0,032 temps, 4ᵉ de 0,027 temps, 2ᵉ sans écart significatif.
+    // Dans le médium (tamborims, repiques, voix) : 0,031 et 0,018 temps.
     target: [0, 0.25, 0.468, 0.723],
   },
   {

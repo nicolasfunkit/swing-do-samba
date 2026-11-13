@@ -79,7 +79,7 @@ Quatre doubles-croches égales.
 
 ### Samba, disques complets (`samba-naveda`)
 
-Moyennes sur 106 extraits de CD (5064 temps, tempo moyen 103 bpm), bande aiguë du spectre. Mélange complet, pas un instrument isolé.
+Moyennes sur 106 extraits de CD (5064 temps, tempo moyen 103 bpm), bande aiguë du spectre (ganzás, shakers). Mélange complet, pas un instrument isolé. Dans le médium (tamborims, repiques, voix), les avances sont de 0,031 et 0,018 temps ; dans le grave (surdo), 0,026 et 0,028.
 
 - **Source** : Naveda, Gouyon, Guedes, Leman (2011)
 - **Fiabilité** : A
@@ -313,6 +313,10 @@ ce qui est plus fort ou plus faible.
 - **Ce n'est pas l'accent sur le temps** d'une boîte à rythmes réglée par
   défaut : accentuer la 1ʳᵉ double-croche de chaque temps va à l'encontre de
   ces mesures.
+
+L'article découpe le son en trois bandes : grave (surdo), médium (tamborims,
+repiques, voix) et aigu (ganzás, shakers). L'accent sur la 2ᵉ double-croche
+ne concerne donc pas le seul tamborim.
 
 Ces profils viennent de disques complets. Pour un instrument précis, l'accent
 dépend du motif joué, et je n'ai pas de mesure par instrument.
