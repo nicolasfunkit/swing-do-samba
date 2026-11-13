@@ -210,6 +210,12 @@ chaque note sa position, son instant et son écart à la grille.
 - **Pas encore fait** : les cycles de 16 pulsations (tresillo, paradigme de
   l'Estácio), le test d'écoute A/B à l'aveugle et l'exercice ta-ka-di-mi.
 
+## Réutiliser les grooves ailleurs
+
+[`docs/grooves-bresiliens.md`](docs/grooves-bresiliens.md) récapitule les
+grooves brésiliens et la tercina sous une forme prête pour un séquenceur :
+positions, ticks, décalages par pas, millisecondes et un bloc JSON.
+
 ## Sources
 
 - **Samba** : L. Naveda, F. Gouyon, C. Guedes, M. Leman, « Microtiming Patterns
