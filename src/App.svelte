@@ -97,7 +97,7 @@
   // Accent de chaque note sur le temps affiché (temps 1 à l'arrêt).
   const accents = $derived(accentsFor(groove, playing ? beatNumber - 1 : 0));
   // Plus la note est forte, plus le point est gros.
-  const radius = (accent: number) => 4 + (accent - 0.4) * 16;
+  const radius = (accent: number) => 6 + (accent - 0.5) * 15;
 
   function accentLabel(accent: number): string {
     if (accent >= 0.8) return 'forte';
@@ -166,7 +166,7 @@
 
         <!-- Grille de référence (cercles vides) et déplacement -->
         {#each timings as t (t.index)}
-          <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="9" />
+          <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="4.5" />
           {#if Math.abs(t.fraction - t.gridFraction) > 0.002}
             <line
               class="shift"
