@@ -88,8 +88,9 @@ avec le mode cycle.
 
 ### 1. Repérer le passage
 
-Ouvrir la vidéo et noter le début et la fin, en secondes, d'un passage qui
-remplit les critères ci-dessus. Faire commencer le passage juste avant une
+Ouvrir la vidéo et noter le début et la fin d'un passage qui remplit les
+critères ci-dessus. `--debut` et `--fin` acceptent des secondes (`72.5`) ou un
+minutage (`1:12.5`, `1:02:03`), comptés depuis le début du fichier. Faire commencer le passage juste avant une
 note qui tombe sur un temps.
 
 ### 2. Trouver le calage

@@ -11,6 +11,7 @@ Mode d'emploi et limites : docs/mesurer-le-swing.md
 Exemples :
     python3 tools/mesurer_swing.py --autotest
     python3 tools/mesurer_swing.py cavaco.mp4 --debut 12 --fin 45 --bpm 96
+    python3 tools/mesurer_swing.py cavaco.mp4 --debut 1:12 --fin 2:05.5
     python3 tools/mesurer_swing.py cavaco.mp4 --debut 12 --fin 45 --json cavaco.json --labels cavaco.txt
     python3 tools/mesurer_swing.py partido.mp4 --debut 8 --fin 60 --bpm 92 --cycle 16
 
@@ -581,11 +582,25 @@ def autotest() -> int:
     return 0 if ok and ok_cycle else 1
 
 
+def parse_time(text: str) -> float:
+    """Lit un instant en secondes (72.5) ou en minutage (1:12.5, 1:02:03)."""
+    try:
+        parts = [float(part.replace(",", ".")) for part in text.strip().split(":")]
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"instant illisible : {text!r} (exemples : 72.5 ou 1:12.5)")
+    if not 1 <= len(parts) <= 3 or any(part < 0 for part in parts) or any(part >= 60 for part in parts[1:]):
+        raise argparse.ArgumentTypeError(f"instant illisible : {text!r} (exemples : 72.5 ou 1:12.5)")
+    seconds = 0.0
+    for part in parts:
+        seconds = seconds * 60 + part
+    return seconds
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("fichier", nargs="?", help="fichier audio ou vidéo (tout format lu par ffmpeg)")
-    parser.add_argument("--debut", type=float, help="début du passage à analyser, en secondes")
-    parser.add_argument("--fin", type=float, help="fin du passage à analyser, en secondes")
+    parser.add_argument("--debut", type=parse_time, help="début du passage : secondes (72.5) ou minutage (1:12.5)")
+    parser.add_argument("--fin", type=parse_time, help="fin du passage : secondes (125) ou minutage (2:05)")
     parser.add_argument("--bpm", type=float, help="tempo approximatif ; estimé automatiquement sinon")
     parser.add_argument("--premiere", type=int, default=1, help="numéro de la première attaque qui tombe sur un temps (défaut : 1)")
     parser.add_argument("--phases", action="store_true", help="affiche le résultat pour les quatre calages possibles")
@@ -603,6 +618,8 @@ def main() -> int:
         return autotest()
     if not args.fichier:
         parser.error("indique un fichier, ou --autotest")
+    if args.debut is not None and args.fin is not None and args.fin <= args.debut:
+        parser.error("--fin doit être après --debut")
     if not Path(args.fichier).is_file():
         sys.exit(f"Fichier introuvable : {args.fichier}")
 
