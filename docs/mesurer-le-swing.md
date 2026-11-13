@@ -186,10 +186,10 @@ décalé d'un temps donne les bonnes positions mais un motif décalé ; un calag
 décalé d'une double-croche donne des positions fausses.
 
 Exemple sur le passage « garfinho » de la vidéo d'Hosoi (7 à 10,6 s), avec
-`--cycle 4 --bpm 120`. Avec `--premiere 1`, le motif sort en `x . x x`, ce
-qui n'est pas un garfinho : la première attaque détectée n'est pas sur le
-temps. Avec `--premiere 2`, on obtient bien `x x . x`, aux positions
-0 · 25 · 75 %.
+`--cycle 4 --bpm 120`. Avec `--premiere 1`, le motif sort en `x . x x`, et
+avec `--premiere 2` en `x x x .` : ce ne sont pas des garfinhos, la note de
+départ n'est pas sur le temps. Avec `--premiere 3`, on obtient bien
+`x x . x`, aux positions 0 · 25 · 75 %.
 
 ## Lire le résultat
 
