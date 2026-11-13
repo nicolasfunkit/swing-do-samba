@@ -35,8 +35,8 @@ describe('grooves', () => {
     expect(positions(samba, 1, 150)).toEqual(positions(samba, 1, 90));
   });
 
-  it('place le samba dans les fourchettes affichées par la vidéo', () => {
-    const [, second, third, fourth] = positions(getGroove('samba'), 1, 90);
+  it.each(['samba', 'samba-hosoi'])('place %s dans les fourchettes de la vidéo', (id) => {
+    const [, second, third, fourth] = positions(getGroove(id), 1, 90);
     expect(second).toBeGreaterThanOrEqual(0.25);
     expect(second).toBeLessThanOrEqual(0.29);
     expect(third).toBeGreaterThanOrEqual(0.42);
@@ -58,6 +58,13 @@ describe('grooves', () => {
     const t = noteTimings(getGroove('samba'), 1, 103);
     expect(Math.round(-t[2].offsetMs)).toBe(19); // 3ᵉ note, aigu du spectre
     expect(Math.round(-t[3].offsetMs)).toBe(16); // 4ᵉ note
+  });
+
+  it('donne un écart moyen de 1/40 du temps pour la version Hosoi', () => {
+    for (const bpm of [60, 90, 140]) {
+      const mean = meanAbsOffsetMs(noteTimings(getGroove('samba-hosoi'), 1, bpm));
+      expect(mean).toBeCloseTo(beatMs(bpm) / 40);
+    }
   });
 
   it('garde un écart moyen proportionnel au temps', () => {

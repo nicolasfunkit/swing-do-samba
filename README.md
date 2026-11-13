@@ -133,7 +133,13 @@ chaque note sa position, son instant et son écart à la grille.
 
 ## Choix et limites
 
-- **Valeurs du samba** : `0 · 25 · 46,8 · 72,3 %`. Ce sont les moyennes
+- **Deux sambas à comparer** : « Samba (Naveda, Gouyon) » joue les moyennes
+  mesurées, « Samba (Hosoi) » joue les valeurs de la vidéo. On passe de l'un à
+  l'autre pendant la lecture, le changement s'entend au temps suivant.
+- **Samba (Hosoi)** : `0 · 27 · 46 · 71 %`, le milieu des fourchettes
+  affichées dans la vidéo (le choix du milieu est le nôtre). L'écart moyen
+  vaut alors exactement 1/40 du temps, le chiffre annoncé par la vidéo.
+- **Samba (Naveda, Gouyon)** : `0 · 25 · 46,8 · 72,3 %`. Ce sont les moyennes
   publiées par Naveda, Gouyon, Guedes et Leman (2011) pour l'aigu du spectre,
   là où joue le tamborim : 3ᵉ double-croche en avance de 0,032 temps, 4ᵉ de
   0,027 temps (19 et 16 ms à 103 bpm, le tempo moyen de leur corpus). Elles
