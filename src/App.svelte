@@ -5,6 +5,7 @@
     GROOVES,
     beatMs,
     DEFAULT_MAX_BPM,
+    accentsFor,
     getGroove,
     isSwingable,
     meanAbsOffsetMs,
@@ -33,6 +34,7 @@
   const engine = new Engine(() => ({
     bpm,
     positions: positions(groove, swing, bpm),
+    accents: [accentsFor(groove, 0), accentsFor(groove, 1)],
     palma,
   }));
 
@@ -91,6 +93,17 @@
 
   const NOTE_COLORS = ['var(--note-1)', 'var(--note-2)', 'var(--note-3)', 'var(--note-4)'];
   const LIT_MS = 90;
+
+  // Accent de chaque note sur le temps affiché (temps 1 à l'arrêt).
+  const accents = $derived(accentsFor(groove, playing ? beatNumber - 1 : 0));
+  // Plus la note est forte, plus le point est gros.
+  const radius = (accent: number) => 4 + (accent - 0.4) * 16;
+
+  function accentLabel(accent: number): string {
+    if (accent >= 0.8) return 'forte';
+    if (accent >= 0.55) return 'moyenne';
+    return 'faible';
+  }
 
   function isLit(fraction: number): boolean {
     if (phase === null) return false;
@@ -173,7 +186,7 @@
             class="note"
             cx={x(t.fraction)}
             cy={Y}
-            r={isLit(t.fraction) ? 14 : 9}
+            r={radius(accents[t.index] ?? 0.6) + (isLit(t.fraction) ? 4 : 0)}
             fill={NOTE_COLORS[t.index % 4]}
           />
           <text class="note-label" x={x(t.fraction)} y={Y - 36}>{t.index + 1}</text>
@@ -185,7 +198,8 @@
       </svg>
     </div>
     <p class="legend">
-      Cercles vides : la grille. Points pleins : ce qui est joué. Pointillés : la tercina.
+      Cercles vides : la grille. Points pleins : ce qui est joué, plus gros quand la note est
+      accentuée. Pointillés : la tercina.
     </p>
   </section>
 
@@ -238,6 +252,7 @@
           <th>Position</th>
           <th>En ms</th>
           <th>Écart</th>
+          <th>Accent</th>
         </tr>
       </thead>
       <tbody>
@@ -250,6 +265,7 @@
             <td>{pct(t.fraction)}</td>
             <td>{ms(t.ms)}</td>
             <td>{offsetLabel(t.offsetMs)}</td>
+            <td>{accentLabel(accents[t.index] ?? 0.6)}</td>
           </tr>
         {/each}
       </tbody>

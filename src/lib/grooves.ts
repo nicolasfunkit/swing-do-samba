@@ -22,6 +22,26 @@ export interface Groove {
   targetAt?: (bpm: number) => number[];
   /** Tempo maximal proposé pour ce groove (160 par défaut). */
   maxBpm?: number;
+  /** Force de chaque note (0 à 1), pour le temps 1 puis le temps 2. */
+  accents?: number[][];
+}
+
+/**
+ * Accents du samba sur un cycle de deux temps, d'après Naveda et al. (2011) :
+ * la 2ᵉ double-croche est accentuée sur le 1ᵉʳ temps, et le 2ᵉ temps est plat
+ * et plus faible (c'est le surdo qui y porte l'accent). L'article ne donne
+ * pas de niveaux : les valeurs sont un choix.
+ */
+export const SAMBA_ACCENTS: number[][] = [
+  [0.6, 0.9, 0.6, 0.6],
+  [0.5, 0.5, 0.5, 0.5],
+];
+
+/** Force des notes d'un groove pour un temps donné (0 = temps 1, 1 = temps 2). */
+export function accentsFor(groove: Groove, beatInCycle: number): number[] {
+  if (groove.accents) return groove.accents[beatInCycle % groove.accents.length];
+  // Par défaut : appui sur la première note du temps.
+  return groove.grid.map((_, i) => (i === 0 ? 0.9 : 0.6));
 }
 
 export const DEFAULT_MAX_BPM = 160;
@@ -68,6 +88,7 @@ export const GROOVES: Groove[] = [
     // extraits, dans l'aigu du spectre (là où joue le tamborim) : 3ᵉ note
     // en avance de 0,032 temps, 4ᵉ de 0,027 temps, 2ᵉ sans écart significatif.
     target: [0, 0.25, 0.468, 0.723],
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'samba-hosoi',
@@ -79,6 +100,7 @@ export const GROOVES: Groove[] = [
     // Fuentes et al. (ISMIR 2019) pour le tamborim, pas des mesures ; le
     // choix du milieu est le nôtre.
     target: [0, 0.27, 0.46, 0.71],
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'tamborim-fuentes',
@@ -90,6 +112,7 @@ export const GROOVES: Groove[] = [
     // par analyse d'image (0,434 et 0,671). 2ᵉ note : non lisible sur la
     // figure, on prend le milieu de leur intervalle de recherche (0,25–0,29).
     target: [0, 0.27, 0.434, 0.671],
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'pandeiro-lindsay',
@@ -101,6 +124,7 @@ export const GROOVES: Groove[] = [
     // relevés par analyse d'image. La 4ᵉ note tombe sur le tiers de triolet,
     // comme le dit le texte de l'article.
     target: [0, 0.293, 0.441, 0.672],
+    accents: SAMBA_ACCENTS,
   },
   // Samba de Bahia : durées moyennes des quatre doubles-croches mesurées par
   // Gerischer (2006), en NUT, telles que reprises par Haugen & Danielsen (2020).
@@ -110,6 +134,7 @@ export const GROOVES: Groove[] = [
     hint: 'Gerischer (2006), samba de Bahia : la 2ᵉ note en retard, la 3ᵉ et la 4ᵉ en avance.',
     grid: SIXTEENTHS,
     target: positionsFromDurations([109, 76, 90, 125]),
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'bahia-reco-reco',
@@ -117,6 +142,7 @@ export const GROOVES: Groove[] = [
     hint: 'Gerischer (2006), samba de Bahia : la 2ᵉ note en place, la 3ᵉ et la 4ᵉ en avance.',
     grid: SIXTEENTHS,
     target: positionsFromDurations([99, 85, 96, 120]),
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'bahia-triangle',
@@ -124,6 +150,7 @@ export const GROOVES: Groove[] = [
     hint: 'Gerischer (2006), samba de Bahia : la 2ᵉ note en retard, la 3ᵉ et la 4ᵉ en avance.',
     grid: SIXTEENTHS,
     target: positionsFromDurations([106, 77, 100, 117]),
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'straight',
@@ -131,6 +158,7 @@ export const GROOVES: Groove[] = [
     hint: 'Quatre doubles-croches égales.',
     grid: SIXTEENTHS,
     target: SIXTEENTHS,
+    accents: SAMBA_ACCENTS,
   },
   {
     id: 'garfinho',
