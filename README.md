@@ -136,8 +136,9 @@ chaque note sa position, son instant et son écart à la grille.
 - **Accents** : les grooves de samba suivent un profil sur deux temps tiré de
   Naveda et al. (2011) : 2ᵉ double-croche accentuée sur le 1ᵉʳ temps, 2ᵉ temps
   plat et plus faible, l'accent y étant porté par le surdo. L'article ne donne
-  pas de niveaux ; les vélocités (0,9 · 0,6 · 0,5) sont un choix. La taille
-  des points suit l'accent du temps en cours, et le tableau l'indique. La
+  pas de niveaux ; les vélocités (0,9 · 0,6 · 0,5) sont un choix. La ligne de
+  temps a une rangée par temps, et un signe « > » au-dessus du numéro marque
+  les notes accentuées ; le tableau l'indique aussi. La
   grille droite partage ces accents pour que seule la mise en place change à
   la comparaison ; garfinho, tercina, jazz et MPC gardent un simple appui sur
   la première note.

@@ -84,20 +84,25 @@
   // Une unité SVG = un pixel : la ligne s'étire avec l'écran, mais les
   // points et les textes gardent une taille lisible sur téléphone.
   let stageWidth = $state(700);
-  const HEIGHT = 150;
+  // Deux lignes, une par temps de la mesure : les notes tombent au même
+  // endroit sur les deux, mais les accents diffèrent.
+  const BEATS = [0, 1];
+  const ROW_GAP = 92;
+  const HEIGHT = 226;
   const PAD_LEFT = 22;
   const PAD_RIGHT = 34;
-  const Y = 84;
+  const rowY = (beatInCycle: number) => 78 + beatInCycle * ROW_GAP;
   const x = (fraction: number) =>
     PAD_LEFT + fraction * Math.max(stageWidth - PAD_LEFT - PAD_RIGHT, 100);
 
   const NOTE_COLORS = ['var(--note-1)', 'var(--note-2)', 'var(--note-3)', 'var(--note-4)'];
   const LIT_MS = 90;
 
-  // Accent de chaque note sur le temps affiché (temps 1 à l'arrêt).
-  const accents = $derived(accentsFor(groove, playing ? beatNumber - 1 : 0));
-  // Plus la note est forte, plus le point est gros.
-  const radius = (accent: number) => 6 + (accent - 0.5) * 15;
+  // Accent de chaque note, pour le temps 1 puis le temps 2.
+  const accents = $derived(BEATS.map((b) => accentsFor(groove, b)));
+  const NOTE_RADIUS = 9;
+  // Une note forte reçoit le signe d'accent musical « > » au-dessus de son numéro.
+  const isAccented = (accent: number) => accent >= 0.8;
 
   function accentLabel(accent: number): string {
     if (accent >= 0.8) return 'forte';
@@ -105,8 +110,8 @@
     return 'faible';
   }
 
-  function isLit(fraction: number): boolean {
-    if (phase === null) return false;
+  function isLit(beatInCycle: number, fraction: number): boolean {
+    if (phase === null || beatNumber - 1 !== beatInCycle) return false;
     const elapsed = (phase - fraction) * beat;
     return elapsed >= 0 && elapsed < LIT_MS;
   }
@@ -149,57 +154,73 @@
         width={stageWidth}
         height={HEIGHT}
         role="img"
-        aria-label="Position des notes dans un temps"
+        aria-label="Position et accent des notes sur les deux temps de la mesure"
       >
-        <line class="axis" x1={x(0)} y1={Y} x2={x(1)} y2={Y} />
+        {#each BEATS as b}
+          {@const Y = rowY(b)}
+          <line class="axis" x1={x(0)} y1={Y} x2={x(1)} y2={Y} />
+          <text class="row-label" x={x(1)} y={Y - 32}>temps {b + 1}</text>
 
-        <!-- Repères : doubles-croches droites et tiers du triolet -->
-        {#each [0, 0.25, 0.5, 0.75, 1] as tick}
-          <line class="tick" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
-          <text class="tick-label" x={x(tick)} y={Y + 36}>
-            {Math.round(tick * beat)}{tick === 1 ? ' ms' : ''}
-          </text>
-        {/each}
-        {#each [1 / 3, 2 / 3] as tick}
-          <line class="tick triplet" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
-        {/each}
+          <!-- Repères : doubles-croches droites et tiers du triolet -->
+          {#each [0, 0.25, 0.5, 0.75, 1] as tick}
+            <line class="tick" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
+            {#if b === 1}
+              <text class="tick-label" x={x(tick)} y={Y + 36}>
+                {Math.round(tick * beat)}{tick === 1 ? ' ms' : ''}
+              </text>
+            {/if}
+          {/each}
+          {#each [1 / 3, 2 / 3] as tick}
+            <line class="tick triplet" x1={x(tick)} y1={Y - 16} x2={x(tick)} y2={Y + 16} />
+          {/each}
 
-        <!-- Grille de référence (cercles vides) et déplacement -->
-        {#each timings as t (t.index)}
-          <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="4.5" />
-          {#if Math.abs(t.fraction - t.gridFraction) > 0.002}
-            <line
-              class="shift"
-              x1={x(t.gridFraction)}
-              y1={Y - 24}
-              x2={x(t.fraction)}
-              y2={Y - 24}
-              stroke={NOTE_COLORS[t.index % 4]}
-            />
-            <circle cx={x(t.fraction)} cy={Y - 24} r="3.5" fill={NOTE_COLORS[t.index % 4]} />
+          <!-- Grille de référence (cercles vides) et déplacement -->
+          {#each timings as t (t.index)}
+            <circle class="ghost" cx={x(t.gridFraction)} cy={Y} r="4.5" />
+            {#if Math.abs(t.fraction - t.gridFraction) > 0.002}
+              <line
+                class="shift"
+                x1={x(t.gridFraction)}
+                y1={Y - 18}
+                x2={x(t.fraction)}
+                y2={Y - 18}
+                stroke={NOTE_COLORS[t.index % 4]}
+              />
+              <circle cx={x(t.fraction)} cy={Y - 18} r="3.5" fill={NOTE_COLORS[t.index % 4]} />
+            {/if}
+          {/each}
+
+          <!-- Notes jouées : l'anneau marque la note qui sonne, le « > » une note accentuée -->
+          {#each timings as t (t.index)}
+            {@const cx = x(t.fraction)}
+            <circle {cx} cy={Y} r={NOTE_RADIUS} fill={NOTE_COLORS[t.index % 4]} />
+            {#if isLit(b, t.fraction)}
+              <circle
+                class="halo"
+                {cx}
+                cy={Y}
+                r={NOTE_RADIUS + 5}
+                stroke={NOTE_COLORS[t.index % 4]}
+              />
+            {/if}
+            <text class="note-label" x={cx} y={Y - 32}>{t.index + 1}</text>
+            {#if isAccented(accents[b][t.index] ?? 0.6)}
+              <polyline
+                class="accent"
+                points="{cx - 6},{Y - 56} {cx + 6},{Y - 52} {cx - 6},{Y - 48}"
+              />
+            {/if}
+          {/each}
+
+          {#if phase !== null && beatNumber - 1 === b}
+            <line class="playhead" x1={x(phase)} y1={Y - 26} x2={x(phase)} y2={Y + 22} />
           {/if}
         {/each}
-
-        <!-- Notes jouées -->
-        {#each timings as t (t.index)}
-          <circle
-            class="note"
-            cx={x(t.fraction)}
-            cy={Y}
-            r={radius(accents[t.index] ?? 0.6) + (isLit(t.fraction) ? 4 : 0)}
-            fill={NOTE_COLORS[t.index % 4]}
-          />
-          <text class="note-label" x={x(t.fraction)} y={Y - 36}>{t.index + 1}</text>
-        {/each}
-
-        {#if phase !== null}
-          <line class="playhead" x1={x(phase)} y1={Y - 52} x2={x(phase)} y2={Y + 20} />
-        {/if}
       </svg>
     </div>
     <p class="legend">
-      Cercles vides : la grille. Points pleins : ce qui est joué, plus gros quand la note est
-      accentuée. Pointillés : la tercina.
+      Une ligne par temps. Points pleins : ce qui est joué. Signe &gt; au-dessus du numéro : note
+      accentuée. Cercles vides : la grille. Pointillés : la tercina.
     </p>
   </section>
 
@@ -252,7 +273,7 @@
           <th>Position</th>
           <th>En ms</th>
           <th>Écart</th>
-          <th>Accent</th>
+          <th>Accent (temps 1 / temps 2)</th>
         </tr>
       </thead>
       <tbody>
@@ -265,7 +286,9 @@
             <td>{pct(t.fraction)}</td>
             <td>{ms(t.ms)}</td>
             <td>{offsetLabel(t.offsetMs)}</td>
-            <td>{accentLabel(accents[t.index] ?? 0.6)}</td>
+            <td>
+              {accentLabel(accents[0][t.index] ?? 0.6)} / {accentLabel(accents[1][t.index] ?? 0.6)}
+            </td>
           </tr>
         {/each}
       </tbody>
@@ -434,8 +457,25 @@
     stroke-linecap: round;
   }
 
-  .note {
-    transition: r 80ms ease-out;
+  .halo {
+    fill: none;
+    stroke-width: 2.5;
+  }
+
+  .accent {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .row-label {
+    fill: var(--muted);
+    font-size: 11px;
+    text-anchor: end;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .playhead {
