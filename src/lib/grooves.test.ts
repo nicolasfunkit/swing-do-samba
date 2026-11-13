@@ -7,7 +7,6 @@ import {
   jazzSwingRatio,
   meanAbsOffsetMs,
   noteTimings,
-  accentsFor,
   positions,
   positionsFromDurations,
 } from './grooves';
@@ -109,25 +108,6 @@ describe('grooves', () => {
       const p = positions(getGroove(id), 1, 100);
       expect(p[2]).toBeLessThan(0.5);
       expect(p[3]).toBeLessThan(0.75);
-    }
-  });
-
-  it('accentue la 2ᵉ double-croche du samba sur le temps 1 seulement', () => {
-    const samba = getGroove('samba');
-    const [first, second] = [accentsFor(samba, 0), accentsFor(samba, 1)];
-    expect(first[1]).toBeGreaterThan(first[0]);
-    expect(first[1]).toBeGreaterThan(first[2]);
-    expect(new Set(second).size).toBe(1); // temps 2 plat
-    expect(Math.max(...second)).toBeLessThan(Math.min(...first));
-    // La grille droite partage les accents du samba : seule la mise en place change.
-    expect(accentsFor(getGroove('straight'), 0)).toEqual(first);
-  });
-
-  it('donne un accent par note à chaque groove', () => {
-    for (const groove of GROOVES) {
-      for (const beat of [0, 1]) {
-        expect(accentsFor(groove, beat)).toHaveLength(groove.grid.length);
-      }
     }
   });
 

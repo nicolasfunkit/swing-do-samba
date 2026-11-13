@@ -4,8 +4,6 @@ export interface EngineParams {
   bpm: number;
   /** Positions des notes dans le temps, en fraction (voir grooves.ts). */
   positions: number[];
-  /** Force de chaque note (0 à 1) pour le temps 1 puis le temps 2. */
-  accents: number[][];
   palma: boolean;
 }
 
@@ -138,7 +136,7 @@ export class Engine {
   private scheduleBeat(): void {
     const voices = this.voices;
     if (!voices) return;
-    const { bpm, positions, accents, palma } = this.getParams();
+    const { bpm, positions, palma } = this.getParams();
     const duration = 60 / bpm;
     const start = this.nextStart;
     const isBeatTwo = this.beatIndex % 2 === 1;
@@ -149,7 +147,7 @@ export class Engine {
 
     positions.forEach((fraction, i) => {
       const time = start + fraction * duration;
-      const velocity = accents[this.beatIndex % accents.length]?.[i] ?? 0.6;
+      const velocity = i === 0 ? 0.9 : 0.6;
       voices.tamborimTone.triggerAttackRelease('A5', 0.03, time, velocity);
       voices.tamborimNoise.triggerAttackRelease(0.02, time, velocity);
     });
