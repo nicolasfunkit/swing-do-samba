@@ -44,6 +44,20 @@ export function jazzSwingRatio(bpm: number): number {
 
 const SIXTEENTHS = [0, 0.25, 0.5, 0.75];
 
+/**
+ * Convertit des durées de notes en positions dans le temps. Gerischer (2006)
+ * publie ses mesures en « NUT » : 100 = une double-croche égale, 400 = un temps.
+ */
+export function positionsFromDurations(durations: number[]): number[] {
+  const total = durations.reduce((sum, d) => sum + d, 0);
+  let elapsed = 0;
+  return durations.map((d) => {
+    const position = elapsed / total;
+    elapsed += d;
+    return position;
+  });
+}
+
 export const GROOVES: Groove[] = [
   {
     id: 'samba',
@@ -61,8 +75,33 @@ export const GROOVES: Groove[] = [
     hint: 'D’après la vidéo : la 2ᵉ note traîne un peu, la 3ᵉ et la 4ᵉ sont nettement en avance.',
     grid: SIXTEENTHS,
     // Milieu des fourchettes affichées dans la vidéo d'André Hosoi :
-    // 25–29 %, 42–50 %, 67–75 %. Le choix du milieu est le nôtre.
+    // 25–29 %, 42–50 %, 67–75 %. Ces bornes sont l'intervalle de recherche de
+    // Fuentes et al. (ISMIR 2019) pour le tamborim, pas des mesures ; le
+    // choix du milieu est le nôtre.
     target: [0, 0.27, 0.46, 0.71],
+  },
+  // Samba de Bahia : durées moyennes des quatre doubles-croches mesurées par
+  // Gerischer (2006), en NUT, telles que reprises par Haugen & Danielsen (2020).
+  {
+    id: 'bahia-pandeiro',
+    label: 'Bahia · pandeiro',
+    hint: 'Gerischer (2006), samba de Bahia : la 2ᵉ note en retard, la 3ᵉ et la 4ᵉ en avance.',
+    grid: SIXTEENTHS,
+    target: positionsFromDurations([109, 76, 90, 125]),
+  },
+  {
+    id: 'bahia-reco-reco',
+    label: 'Bahia · reco-reco',
+    hint: 'Gerischer (2006), samba de Bahia : la 2ᵉ note en place, la 3ᵉ et la 4ᵉ en avance.',
+    grid: SIXTEENTHS,
+    target: positionsFromDurations([99, 85, 96, 120]),
+  },
+  {
+    id: 'bahia-triangle',
+    label: 'Bahia · triangle',
+    hint: 'Gerischer (2006), samba de Bahia : la 2ᵉ note en retard, la 3ᵉ et la 4ᵉ en avance.',
+    grid: SIXTEENTHS,
+    target: positionsFromDurations([106, 77, 100, 117]),
   },
   {
     id: 'straight',

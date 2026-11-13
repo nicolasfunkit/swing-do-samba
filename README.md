@@ -138,7 +138,22 @@ chaque note sa position, son instant et son écart à la grille.
   l'autre pendant la lecture, le changement s'entend au temps suivant.
 - **Samba (Hosoi)** : `0 · 27 · 46 · 71 %`, le milieu des fourchettes
   affichées dans la vidéo (le choix du milieu est le nôtre). L'écart moyen
-  vaut alors exactement 1/40 du temps, le chiffre annoncé par la vidéo.
+  vaut alors exactement 1/40 du temps, le chiffre annoncé par la vidéo. Ces
+  fourchettes (25–29, 42–50, 67–75 %) sont mot pour mot l'intervalle dans
+  lequel Fuentes et al. (ISMIR 2019) cherchent le placement du tamborim en
+  samba-enredo : ce sont des bornes de recherche, pas des valeurs mesurées.
+- **Samba de Bahia** : trois grooves tirés de Gerischer (2006), un par
+  instrument. Elle donne la durée moyenne de chaque double-croche (100 = une
+  double-croche égale) : pandeiro `109 · 76 · 90 · 125`, reco-reco
+  `99 · 85 · 96 · 120`, triangle `106 · 77 · 100 · 117`. Le code les convertit
+  en positions. Je n'ai pas lu l'article : ces chiffres viennent du tableau
+  repris par Haugen et Danielsen (2020), obtenu via un extrait de moteur de
+  recherche. Chaque ligne fait bien 400, mais ils restent à vérifier sur le
+  texte.
+- **Non ajoutés faute de chiffres** : pandeiro, surdo et agogô selon Lindsay
+  et Nordquist (2007), dont je n'ai trouvé que des ordres de grandeur (écarts
+  de 10 à 20 ms, tamborim environ 15 ms devant le pandeiro à 140 bpm) ; et le
+  choro, pour lequel je n'ai trouvé aucune mesure publiée.
 - **Samba (Naveda, Gouyon)** : `0 · 25 · 46,8 · 72,3 %`. Ce sont les moyennes
   publiées par Naveda, Gouyon, Guedes et Leman (2011) pour l'aigu du spectre,
   là où joue le tamborim : 3ᵉ double-croche en avance de 0,032 temps, 4ᵉ de
@@ -196,6 +211,19 @@ chaque note sa position, son instant et son écart à la grille.
   p. 291-302.
   [doi:10.1525/mp.2017.34.3.291](https://doi.org/10.1525/mp.2017.34.3.291).
   Résumé seulement.
+- **Samba de Bahia** : C. Gerischer, « O suingue baiano: Rhythmic Feeling and
+  Microrhythmic Phenomena in Brazilian Percussion », *Ethnomusicology* 50(1),
+  2006, p. 99-119. Non lu ; valeurs reprises de M. R. Haugen et A. Danielsen,
+  « Effect of tempo on relative note durations in a performed samba groove »,
+  *Journal of New Music Research*, 2020.
+  [doi:10.1080/09298215.2020.1767655](https://doi.org/10.1080/09298215.2020.1767655).
+- **Tamborim** : M. Fuentes et al., « Tracking Beats and Microtiming in
+  Afro-Latin American Music Using Conditional Random Fields and Deep
+  Learning », ISMIR 2019.
+  [PDF](https://archives.ismir.net/ismir2019/paper/000029.pdf). Lu.
+- **Pandeiro et tamborim** : K. Lindsay, P. Nordquist, « More Than a Feeling:
+  Some Technical Details of Swing Rhythm in Music », *Acoustics Today* 3(3),
+  2007. Article de vulgarisation, lu en partie.
 - **Vidéo de départ** : André Hosoi, « O swing do samba ».
 
 ## Structure

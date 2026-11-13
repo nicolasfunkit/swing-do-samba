@@ -8,6 +8,7 @@ import {
   meanAbsOffsetMs,
   noteTimings,
   positions,
+  positionsFromDurations,
 } from './grooves';
 
 describe('grooves', () => {
@@ -94,6 +95,20 @@ describe('grooves', () => {
     // Entre 133 et 300 bpm, la note courte dure 100 ms.
     const t = noteTimings(jazz, 1, 180);
     expect(beatMs(180) - t[1].ms).toBeCloseTo(100);
+  });
+
+  it('convertit les durées de Gerischer en positions', () => {
+    expect(positionsFromDurations([100, 100, 100, 100])).toEqual([0, 0.25, 0.5, 0.75]);
+    const pandeiro = positions(getGroove('bahia-pandeiro'), 1, 100);
+    expect(pandeiro[1]).toBeCloseTo(0.2725);
+    expect(pandeiro[2]).toBeCloseTo(0.4625);
+    expect(pandeiro[3]).toBeCloseTo(0.6875);
+    // Dans les trois instruments, la 3ᵉ et la 4ᵉ note sont en avance.
+    for (const id of ['bahia-pandeiro', 'bahia-reco-reco', 'bahia-triangle']) {
+      const p = positions(getGroove(id), 1, 100);
+      expect(p[2]).toBeLessThan(0.5);
+      expect(p[3]).toBeLessThan(0.75);
+    }
   });
 
   it('sait quels grooves réagissent au curseur de swing', () => {
