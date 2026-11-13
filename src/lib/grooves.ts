@@ -91,6 +91,17 @@ export const GROOVES: Groove[] = [
     // figure, on prend le milieu de leur intervalle de recherche (0,25–0,29).
     target: [0, 0.27, 0.434, 0.671],
   },
+  {
+    id: 'pandeiro-lindsay',
+    label: 'Pandeiro (Lindsay)',
+    hint: 'Pandeiro seul, 8 temps d’un enregistrement de 1963 : 2ᵉ note en retard, 3ᵉ et 4ᵉ très en avance. Valeurs lues sur une figure.',
+    grid: SIXTEENTHS,
+    // Lindsay & Nordquist (2007), figure 28 : batida de pandeiro seul, vers
+    // 125 bpm. Moyenne sur 8 temps des marqueurs de notes de la figure,
+    // relevés par analyse d'image. La 4ᵉ note tombe sur le tiers de triolet,
+    // comme le dit le texte de l'article.
+    target: [0, 0.293, 0.441, 0.672],
+  },
   // Samba de Bahia : durées moyennes des quatre doubles-croches mesurées par
   // Gerischer (2006), en NUT, telles que reprises par Haugen & Danielsen (2020).
   {

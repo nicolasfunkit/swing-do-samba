@@ -152,6 +152,14 @@ chaque note sa position, son instant et son écart à la grille.
   de loin le swing le plus marqué de l'appli : environ 40 et 47 ms d'avance
   à 100 bpm, contre 19 et 16 ms dans les mesures de Naveda sur des disques
   complets.
+- **Pandeiro (Lindsay)** : `0 · 29,3 · 44,1 · 67,2 %`, d'après la figure 28
+  de Lindsay et Nordquist (2007) : une batida de pandeiro seul, vers 125 bpm.
+  C'est la moyenne, sur 8 temps, de la position des marqueurs de notes de la
+  figure, relevée par analyse d'image. D'un temps à l'autre les valeurs
+  varient de 27,5 à 30,5 %, de 41,4 à 46,1 % et de 65,1 à 69,4 %. Le texte
+  confirme que la 4ᵉ note tombe sur une subdivision de triolet. Un seul
+  musicien, un seul enregistrement : c'est un exemple, pas une moyenne de
+  style.
 - **Samba de Bahia** : trois grooves tirés de Gerischer (2006), un par
   instrument. Elle donne la durée moyenne de chaque double-croche (100 = une
   double-croche égale) : pandeiro `109 · 76 · 90 · 125`, reco-reco
@@ -160,10 +168,10 @@ chaque note sa position, son instant et son écart à la grille.
   repris par Haugen et Danielsen (2020), obtenu via un extrait de moteur de
   recherche. Chaque ligne fait bien 400, mais ils restent à vérifier sur le
   texte.
-- **Non ajoutés faute de chiffres** : pandeiro, surdo et agogô selon Lindsay
-  et Nordquist (2007), dont je n'ai trouvé que des ordres de grandeur (écarts
-  de 10 à 20 ms, tamborim environ 15 ms devant le pandeiro à 140 bpm) ; et le
-  choro, pour lequel je n'ai trouvé aucune mesure publiée.
+- **Non ajoutés** : le surdo et l'agogô de Lindsay et Nordquist, qui ne
+  jouent pas les quatre doubles-croches (le surdo marque la pulsation,
+  l'agogô joue un motif mélodique « légèrement en avance ») ; et le choro,
+  pour lequel je n'ai trouvé aucune mesure publiée.
 - **Samba (Naveda, Gouyon)** : `0 · 25 · 46,8 · 72,3 %`. Ce sont les moyennes
   publiées par Naveda, Gouyon, Guedes et Leman (2011) pour l'aigu du spectre,
   là où joue le tamborim : 3ᵉ double-croche en avance de 0,032 temps, 4ᵉ de
@@ -232,9 +240,9 @@ chaque note sa position, son instant et son écart à la grille.
   Learning », ISMIR 2019.
   [PDF](https://archives.ismir.net/ismir2019/paper/000029.pdf),
   [HAL](https://hal.science/hal-02419361v1). Lu en entier.
-- **Pandeiro et tamborim** : K. Lindsay, P. Nordquist, « More Than a Feeling:
-  Some Technical Details of Swing Rhythm in Music », *Acoustics Today* 3(3),
-  2007. Article de vulgarisation, lu en partie.
+- **Pandeiro** : K. Lindsay, P. Nordquist, « Pulse and Swing: Quantitative
+  Analysis of Hierarchical Rhythmic Structure », 2007 (version longue de leur
+  communication au JASA). Section sur le Brésil lue en entier.
 - **Vidéo de départ** : André Hosoi, « O swing do samba ».
 
 ## Structure
