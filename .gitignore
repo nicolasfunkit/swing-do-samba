@@ -1,4 +1,5 @@
 node_modules
 dist
-# Vidéo source : appartient à son auteur, non redistribuée
+# Vidéo et article sources : appartiennent à leurs auteurs, non redistribués
 *.mp4
+*.pdf

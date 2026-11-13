@@ -48,10 +48,12 @@ export const GROOVES: Groove[] = [
   {
     id: 'samba',
     label: 'Samba',
-    hint: 'La 2ᵉ note traîne un peu, la 3ᵉ et la 4ᵉ arrivent en avance.',
+    hint: 'La 3ᵉ et la 4ᵉ note arrivent en avance, la 2ᵉ reste en place.',
     grid: SIXTEENTHS,
-    // Milieu des fourchettes mesurées : 25–29 %, 42–50 %, 67–75 %.
-    target: [0, 0.27, 0.46, 0.71],
+    // Moyennes mesurées par Naveda, Gouyon, Guedes & Leman (2011) sur 106
+    // extraits, dans l'aigu du spectre (là où joue le tamborim) : 3ᵉ note
+    // en avance de 0,032 temps, 4ᵉ de 0,027 temps, 2ᵉ sans écart significatif.
+    target: [0, 0.25, 0.468, 0.723],
   },
   {
     id: 'straight',
@@ -89,8 +91,8 @@ export const GROOVES: Groove[] = [
   },
   {
     id: 'mpc',
-    label: 'Swing MPC',
-    hint: 'La 2ᵉ et la 4ᵉ double-croche en retard.',
+    label: 'MPC (boîte à rythmes)',
+    hint: 'Le swing des boîtes à rythmes Akai MPC, rien à voir avec la MPB : la 2ᵉ et la 4ᵉ double-croche en retard.',
     grid: SIXTEENTHS,
     // Swing MPC à 62 % : chaque paire de doubles-croches est découpée 62/38.
     target: [0, 0.31, 0.5, 0.81],

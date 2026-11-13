@@ -28,14 +28,14 @@ describe('grooves', () => {
   it('interpole entre la grille et la cible', () => {
     const samba = getGroove('samba');
     expect(positions(samba, 0, 90)).toEqual([0, 0.25, 0.5, 0.75]);
-    expect(positions(samba, 1, 90)).toEqual([0, 0.27, 0.46, 0.71]);
-    expect(positions(samba, 0.5, 90)[2]).toBeCloseTo(0.48);
+    expect(positions(samba, 1, 90)).toEqual([0, 0.25, 0.468, 0.723]);
+    expect(positions(samba, 0.5, 90)[2]).toBeCloseTo(0.484);
     expect(positions(samba, 2, 90)).toEqual(positions(samba, 1, 90));
     expect(positions(samba, -1, 90)).toEqual(positions(samba, 0, 90));
     expect(positions(samba, 1, 150)).toEqual(positions(samba, 1, 90));
   });
 
-  it('place le samba dans les fourchettes mesurées', () => {
+  it('place le samba dans les fourchettes affichées par la vidéo', () => {
     const [, second, third, fourth] = positions(getGroove('samba'), 1, 90);
     expect(second).toBeGreaterThanOrEqual(0.25);
     expect(second).toBeLessThanOrEqual(0.29);
@@ -48,16 +48,22 @@ describe('grooves', () => {
   it('convertit le BPM en millisecondes', () => {
     expect(beatMs(120)).toBe(500);
     const t = noteTimings(getGroove('samba'), 1, 120);
-    expect(t[1].ms).toBeCloseTo(135);
-    expect(t[1].offsetMs).toBeCloseTo(10); // en retard
-    expect(t[2].offsetMs).toBeCloseTo(-20); // en avance
-    expect(t[3].offsetMs).toBeCloseTo(-20);
+    expect(t[1].ms).toBeCloseTo(125);
+    expect(t[1].offsetMs).toBeCloseTo(0); // sur la grille
+    expect(t[2].offsetMs).toBeCloseTo(-16); // en avance
+    expect(t[3].offsetMs).toBeCloseTo(-13.5);
   });
 
-  it('donne un écart moyen de 1/40 du temps pour le samba', () => {
+  it('retrouve les avances publiées au tempo moyen du corpus (103 bpm)', () => {
+    const t = noteTimings(getGroove('samba'), 1, 103);
+    expect(Math.round(-t[2].offsetMs)).toBe(19); // 3ᵉ note, aigu du spectre
+    expect(Math.round(-t[3].offsetMs)).toBe(16); // 4ᵉ note
+  });
+
+  it('garde un écart moyen proportionnel au temps', () => {
     for (const bpm of [60, 90, 140]) {
       const mean = meanAbsOffsetMs(noteTimings(getGroove('samba'), 1, bpm));
-      expect(mean).toBeCloseTo(beatMs(bpm) / 40);
+      expect(mean).toBeCloseTo((beatMs(bpm) * (0.032 + 0.027)) / 4);
     }
   });
 

@@ -257,7 +257,7 @@
   </div>
 
   <footer>
-    D’après la vidéo « O swing do samba » d’André Hosoi. Chiffres : Gouyon (2007), samba de roda.
+    D’après la vidéo « O swing do samba » d’André Hosoi. Chiffres du samba : Naveda, Gouyon, Guedes et Leman (2011).
   </footer>
 </main>
 

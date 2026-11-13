@@ -95,7 +95,7 @@ swing (grille droite, garfinho, tercina) ont simplement `grid` égal à
 Le BPM n'intervient qu'au dernier moment, pour convertir une fraction en
 millisecondes (`60000 / bpm` par temps). Quand le tempo change, les
 pourcentages ne bougent pas, les millisecondes si. À 90 bpm
-l'écart moyen du samba est d'environ 17 ms, à 140 bpm d'environ 11 ms.
+la 3ᵉ note du samba est en avance de 21 ms, à 140 bpm de 14 ms.
 
 ### 2. Programmer le son sur l'horloge audio
 
@@ -133,11 +133,28 @@ chaque note sa position, son instant et son écart à la grille.
 
 ## Choix et limites
 
-- **Valeurs du samba** : `0 · 27 · 46 · 71 %`, le milieu des fourchettes
-  de la vidéo. C'est un choix d'implémentation, pas une mesure. Il donne un
-  écart moyen d'exactement 1/40 du temps, cohérent avec la vidéo.
-- **Swing MPC** : réglé à 62 % (`0 · 31 · 50 · 81 %`). La vidéo ne donne pas
-  de chiffre ; c'est une valeur courante, à ajuster.
+- **Valeurs du samba** : `0 · 25 · 46,8 · 72,3 %`. Ce sont les moyennes
+  publiées par Naveda, Gouyon, Guedes et Leman (2011) pour l'aigu du spectre,
+  là où joue le tamborim : 3ᵉ double-croche en avance de 0,032 temps, 4ᵉ de
+  0,027 temps (19 et 16 ms à 103 bpm, le tempo moyen de leur corpus). Elles
+  tombent dans les fourchettes de la vidéo.
+- **2ᵉ double-croche** : la vidéo la montre légèrement en retard (25 → 29 %).
+  L'article ne rapporte pas d'écart de placement sur cette note, seulement un
+  accent d'intensité ; elle reste donc sur la grille ici.
+- **Écart moyen** : la vidéo annonce environ 1/40 du temps. Avec les moyennes
+  de l'article on obtient plutôt 1/68 sur les quatre notes, soit 1/34 sur les
+  deux notes déplacées.
+- **Ce que la mesure couvre** : 106 extraits de CD du commerce, analysés par
+  bandes de fréquences sur le mélange complet, pas un tamborim isolé. L'article
+  trouve aussi un léger retard des graves sur la 1ʳᵉ double-croche (0,012
+  temps, 7 ms), que l'appli ne reproduit pas.
+- **Swing MPC** : réglé à 62 % (`0 · 31 · 50 · 81 %`). La définition vient de
+  Roger Linn : le pourcentage est la part de la première double-croche dans
+  chaque croche, 50 % = droit, 66 % = triolet, et seules les doubles-croches
+  paires sont retardées. Il cite lui-même 62 % comme réglage plus souple que
+  66 % à 90 bpm. La vidéo ne donne pas de chiffre. À titre de comparaison,
+  Frane (2017) mesure un swing bien plus léger dans les breaks de batterie
+  classiques du hip-hop : rapport médian 1,2:1, soit environ 55 %.
 - **Jazz** : deux croches par temps, dont le rapport long/court dépend du
   tempo. C'est le seul groove où le BPM change les proportions. Le modèle
   garde la note courte à 100 ms et borne le rapport entre 1:1 et 3,5:1 : il
@@ -153,6 +170,27 @@ chaque note sa position, son instant et son écart à la grille.
   lecture peut alors avoir des trous. Elle se recale au retour.
 - **Pas encore fait** : les cycles de 16 pulsations (tresillo, paradigme de
   l'Estácio), le test d'écoute A/B à l'aveugle et l'exercice ta-ka-di-mi.
+
+## Sources
+
+- **Samba** : L. Naveda, F. Gouyon, C. Guedes, M. Leman, « Microtiming Patterns
+  and Interactions with Musical Properties in Samba Music », *Journal of New
+  Music Research* 40(3), 2011, p. 225-238.
+  [doi:10.1080/09298215.2011.603833](https://doi.org/10.1080/09298215.2011.603833).
+  Lu en entier. L'article confirme Gouyon (2007), que la vidéo cite et que je
+  n'ai pas pu consulter.
+- **Jazz** : A. Friberg, A. Sundström, « Swing Ratios and Ensemble Timing in
+  Jazz Performance », *Music Perception* 19(3), 2002, p. 333-349.
+  [doi:10.1525/mp.2002.19.3.333](https://doi.org/10.1525/mp.2002.19.3.333).
+  Résumé seulement.
+- **Swing MPC** : entretien avec Roger Linn,
+  [Attack Magazine](https://www.attackmagazine.com/features/interview/roger-linn-swing-groove-magic-mpc-timing/).
+- **Swing à la double-croche** : A. V. Frane, « Swing Rhythm in Classic Drum
+  Breaks From Hip-Hop's Breakbeat Canon », *Music Perception* 34(3), 2017,
+  p. 291-302.
+  [doi:10.1525/mp.2017.34.3.291](https://doi.org/10.1525/mp.2017.34.3.291).
+  Résumé seulement.
+- **Vidéo de départ** : André Hosoi, « O swing do samba ».
 
 ## Structure
 
