@@ -80,6 +80,17 @@ export const GROOVES: Groove[] = [
     // choix du milieu est le nôtre.
     target: [0, 0.27, 0.46, 0.71],
   },
+  {
+    id: 'tamborim-fuentes',
+    label: 'Tamborim (Fuentes)',
+    hint: 'Tamborim seul en samba-enredo : la 3ᵉ et la 4ᵉ note très en avance. Valeurs lues sur une figure.',
+    grid: SIXTEENTHS,
+    // Fuentes et al. (ISMIR 2019), 396 temps de tamborim seul (jeu BRID).
+    // 3ᵉ et 4ᵉ notes : centre du nuage de points de leur figure 6, relevé
+    // par analyse d'image (0,434 et 0,671). 2ᵉ note : non lisible sur la
+    // figure, on prend le milieu de leur intervalle de recherche (0,25–0,29).
+    target: [0, 0.27, 0.434, 0.671],
+  },
   // Samba de Bahia : durées moyennes des quatre doubles-croches mesurées par
   // Gerischer (2006), en NUT, telles que reprises par Haugen & Danielsen (2020).
   {

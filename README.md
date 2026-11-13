@@ -142,6 +142,16 @@ chaque note sa position, son instant et son écart à la grille.
   fourchettes (25–29, 42–50, 67–75 %) sont mot pour mot l'intervalle dans
   lequel Fuentes et al. (ISMIR 2019) cherchent le placement du tamborim en
   samba-enredo : ce sont des bornes de recherche, pas des valeurs mesurées.
+- **Tamborim (Fuentes)** : `0 · 27 · 43,4 · 67,1 %`, d'après Fuentes et al.
+  (ISMIR 2019), qui annotent 396 temps de tamborim seul en samba-enredo. Le
+  texte ne donne pas de moyenne : les 3ᵉ et 4ᵉ positions sont le centre du
+  nuage de points de leur figure 6, relevé par analyse d'image, donc à
+  0,005 près environ (80 % des points sont entre 40,7 et 46,2 % pour la 3ᵉ,
+  entre 65,4 et 68,9 % pour la 4ᵉ). La 2ᵉ note n'est pas lisible sur la
+  figure ; elle est placée au milieu de leur intervalle de recherche. C'est
+  de loin le swing le plus marqué de l'appli : environ 40 et 47 ms d'avance
+  à 100 bpm, contre 19 et 16 ms dans les mesures de Naveda sur des disques
+  complets.
 - **Samba de Bahia** : trois grooves tirés de Gerischer (2006), un par
   instrument. Elle donne la durée moyenne de chaque double-croche (100 = une
   double-croche égale) : pandeiro `109 · 76 · 90 · 125`, reco-reco
@@ -220,7 +230,8 @@ chaque note sa position, son instant et son écart à la grille.
 - **Tamborim** : M. Fuentes et al., « Tracking Beats and Microtiming in
   Afro-Latin American Music Using Conditional Random Fields and Deep
   Learning », ISMIR 2019.
-  [PDF](https://archives.ismir.net/ismir2019/paper/000029.pdf). Lu.
+  [PDF](https://archives.ismir.net/ismir2019/paper/000029.pdf),
+  [HAL](https://hal.science/hal-02419361v1). Lu en entier.
 - **Pandeiro et tamborim** : K. Lindsay, P. Nordquist, « More Than a Feeling:
   Some Technical Details of Swing Rhythm in Music », *Acoustics Today* 3(3),
   2007. Article de vulgarisation, lu en partie.
