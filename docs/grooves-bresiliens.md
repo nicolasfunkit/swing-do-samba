@@ -283,14 +283,39 @@ tableaux ci-dessus :
 - **Grave en retard** : dans le bas du spectre (surdo), la 1ʳᵉ double-croche
   est en retard de 0,012 temps, soit 7 ms à 103 bpm. Pour le reproduire,
   décaler la piste de grave de +12 ticks à 960 PPQ.
-- **Accent sur la 2ᵉ double-croche** : elle est nettement plus forte dans le
-  médium et l'aigu. L'article ne donne pas de valeur de vélocité.
+- **Accents** : voir la section « Accentuation » ci-dessous.
 - **Phrasé sur plusieurs temps** : l'article décrit des accélérations et
   ralentissements sur 2 et 4 temps, sans chiffres simples à reprendre.
 
 Haugen et Danielsen (2020) indiquent par ailleurs que les proportions bougent
 avec le tempo sur un pandeiro : la 2ᵉ double-croche raccourcit et la 4ᵉ
 s'allonge quand le tempo monte. Je n'ai que leur résumé, pas de chiffres.
+
+## Accentuation
+
+Le placement ne suffit pas : Naveda et al. (2011) montrent que les écarts de
+temps vont de pair avec un profil d'intensité, qui n'est pas le même sur les
+deux temps de la mesure. L'article ne donne aucune valeur de vélocité, seulement
+ce qui est plus fort ou plus faible.
+
+| | Double-croche 1 | 2 | 3 | 4 |
+|---|---|---|---|---|
+| Temps 1, grave | faible | | | |
+| Temps 1, médium et aigu | | accentuée | | accentuée (selon les cas) |
+| Temps 2, grave | forte (surdo) | | | |
+| Temps 2, médium et aigu | | plate et faible | plate et faible | plate et faible |
+
+- **Sur un temps isolé** : la 2ᵉ double-croche est nettement accentuée dans
+  le médium et l'aigu ; dans l'aigu, la seconde moitié du temps est plate.
+- **Sur deux temps** : le 2ᵉ temps commence par un accent fort dans le grave,
+  le surdo, suivi de doubles-croches plates et faibles. Le 1ᵉʳ temps commence
+  faiblement dans le grave.
+- **Ce n'est pas l'accent sur le temps** d'une boîte à rythmes réglée par
+  défaut : accentuer la 1ʳᵉ double-croche de chaque temps va à l'encontre de
+  ces mesures.
+
+Ces profils viennent de disques complets. Pour un instrument précis, l'accent
+dépend du motif joué, et je n'ai pas de mesure par instrument.
 
 ## Données brutes
 
